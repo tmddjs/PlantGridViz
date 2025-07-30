@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
+import { motion } from "framer-motion";
 
 export default function PlantCell({ plant, index, isSelected, isHovered, onSelect, onHover, mousePositionRef }) {
   const cellRef = useRef(null);
@@ -94,7 +95,9 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
   };
 
   return (
-    <div
+    <motion.div
+      layout
+      transition={{ layout: { type: 'spring', stiffness: 300, damping: 30 } }}
       ref={cellRef}
       className={`plant-cell flex flex-col items-center justify-center relative cursor-pointer transition-transform duration-100 ease-out ${
         isSelected ? 'opacity-100' : ''
@@ -111,6 +114,6 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
         <div className="text-[8px] font-medium text-botanical-dark leading-tight">{plant.korean}</div>
         <div className="text-[6px] italic text-botanical-medium leading-tight mt-0.5">{plant.scientific}</div>
       </div>
-    </div>
+    </motion.div>
   );
 }

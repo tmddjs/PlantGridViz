@@ -49,7 +49,18 @@ export default function PlantGrid() {
   const handleHover = (plant, index, rect) => {
     setHoveredPlant(plant);
     setHoveredIndex(plant ? (index ?? null) : null);
-    setHoveredRect(rect ?? null);
+
+    if (!plant) {
+      setHoveredRect(null);
+      return;
+    }
+
+    if (rect) {
+      setHoveredRect(rect);
+    } else {
+      const elem = document.querySelector(`[data-testid="plant-cell-${index}"]`);
+      setHoveredRect(elem ? elem.getBoundingClientRect() : null);
+    }
   };
 
   const clearSelection = () => {
@@ -101,7 +112,7 @@ export default function PlantGrid() {
                   isSelected={selectedPlants.some(p => p.id === plant.id)}
                   isHovered={hoveredPlant?.id === plant.id}
                   onSelect={handleSelect}
-                  onHover={(p, rect) => handleHover(p, index, rect)}
+                  onHover={(p, i, rect) => handleHover(p, i, rect)}
                   mousePositionRef={mousePositionRef}
                 />
               ))}

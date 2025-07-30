@@ -64,8 +64,8 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
     }
   };
 
-  const handleMouseEnter = () => {
-    const rect = cellRef.current?.getBoundingClientRect();
+  const handleMouseEnter = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
     onHover(plant, index, rect);
   };
 
@@ -73,9 +73,9 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
     onHover(null);
   };
 
-  const handleHoverMouseMove = () => {
+  const handleHoverMouseMove = (e) => {
     if (!isHovered) return;
-    const rect = cellRef.current?.getBoundingClientRect();
+    const rect = e.currentTarget.getBoundingClientRect();
     onHover(plant, index, rect);
   };
 

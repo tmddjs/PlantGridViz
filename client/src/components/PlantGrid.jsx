@@ -2,13 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { plantsData } from "../data/plantsData.js";
 import PlantCell from "./PlantCell.jsx";
-import SidePanel from "./SidePanel.jsx";
 
 export default function PlantGrid() {
   const [selectedPlants, setSelectedPlants] = useState([]);
   const [hoveredPlant, setHoveredPlant] = useState(null);
-  const [hoveredRect, setHoveredRect] = useState(null);
-  const [imageUrl, setImageUrl] = useState("");
   const mousePositionRef = useRef({ x: 0, y: 0 });
 
   const plants = plantsData.map((data, index) => ({
@@ -38,23 +35,7 @@ export default function PlantGrid() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!hoveredPlant) {
-      setImageUrl("");
-      return;
-    }
-
-    const controller = new AbortController();
-    const url = `https://source.unsplash.com/160x160/?${encodeURIComponent(hoveredPlant.scientific)}`;
-
-    fetch(url, { signal: controller.signal })
-      .then((res) => setImageUrl(res.url))
-      .catch(() => {});
-
-    return () => {
-      controller.abort();
-    };
-  }, [hoveredPlant]);
+  // no external image fetch
 
   const handleSelect = (plant) => {
     const index = selectedPlants.findIndex(p => p.id === plant.id);
@@ -65,37 +46,20 @@ export default function PlantGrid() {
     }
   };
 
-  const handleHover = (plant, index, rect) => {
+  const handleHover = (plant) => {
     setHoveredPlant(plant);
-
-    if (!plant) {
-      setHoveredRect(null);
-      return;
-    }
-
-    if (rect) {
-      setHoveredRect(rect);
-    } else {
-      const elem = document.querySelector(`[data-testid="plant-cell-${index}"]`);
-      setHoveredRect(elem ? elem.getBoundingClientRect() : null);
-    }
   };
 
   const clearSelection = () => {
     setSelectedPlants([]);
   };
 
-  const hasSidePanelOpen = selectedPlants.length > 0;
 
   return (
     <div className="font-crimson text-botanical-dark min-h-screen bg-white">
       {/* Header */}
-      <header className={`py-8 px-6 border-b border-botanical-light transition-all duration-300 ease-out ${
-        hasSidePanelOpen ? 'text-center mr-80' : 'text-center'
-      }`}>
-        <div className={`transition-all duration-300 ease-out ${
-          hasSidePanelOpen ? 'max-w-4xl mx-auto' : ''
-        }`}>
+      <header className="py-8 px-6 border-b border-botanical-light text-center">
+        <div>
           <h1 className="text-lg font-normal tracking-wide mb-2">식생 컬렉션</h1>
           <p className="text-xs text-botanical-medium font-light">Botanical Species Interactive Grid</p>
           
@@ -113,9 +77,7 @@ export default function PlantGrid() {
       {/* Main Content */}
       <div className="flex">
         {/* Main Grid */}
-        <main className={`py-12 px-6 transition-all duration-300 ease-out ${
-          hasSidePanelOpen ? 'flex-1 mr-80' : 'w-full'
-        }`}>
+        <main className="py-12 px-6 w-full">
           <div className="max-w-4xl mx-auto">
             {/* Flexible Container allowing dynamic repositioning */}
             <motion.div
@@ -136,7 +98,7 @@ export default function PlantGrid() {
                   isSelected={selectedPlants.some(p => p.id === plant.id)}
                   isHovered={hoveredPlant?.id === plant.id}
                   onSelect={handleSelect}
-                  onHover={(p, i, rect) => handleHover(p, i, rect)}
+                  onHover={(p) => handleHover(p)}
                   mousePositionRef={mousePositionRef}
                 />
               ))}
@@ -144,36 +106,11 @@ export default function PlantGrid() {
           </div>
         </main>
         
-        {/* Side Panel */}
-        <SidePanel
-          selectedPlants={selectedPlants}
-          isVisible={hasSidePanelOpen}
-          onClear={clearSelection}
-        />
       </div>
 
-      {/* Hover Detail Tooltip */}
-      {hoveredPlant && hoveredRect && (
-        <div
-          className="fixed bg-white/95 border border-botanical-light p-2 text-xs z-30 shadow"
-          style={{
-            left:
-              hoveredRect.right + 200 > window.innerWidth
-                ? hoveredRect.left
-                : hoveredRect.right + 8,
-            top:
-              hoveredRect.right + 200 > window.innerWidth
-                ? hoveredRect.bottom + 8
-                : hoveredRect.top,
-          }}
-        >
-          {imageUrl && (
-            <img
-              src={imageUrl}
-              alt={hoveredPlant.korean}
-              className="w-40 h-40 object-cover mb-2"
-            />
-          )}
+      {/* Hover Detail Row */}
+      {hoveredPlant && (
+        <div className="mt-6 p-4 border border-botanical-light bg-white text-xs">
           <div className="text-sm font-medium text-botanical-dark mb-1">
             {hoveredPlant.korean}{" "}
             <span className="italic text-botanical-medium">({hoveredPlant.scientific})</span>

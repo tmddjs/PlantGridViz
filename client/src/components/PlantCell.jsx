@@ -66,19 +66,17 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
     }
   };
 
-  const handleMouseEnter = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    onHover(plant, index, rect);
+  const handleMouseEnter = () => {
+    onHover(plant);
   };
 
   const handleMouseLeave = () => {
     onHover(null);
   };
 
-  const handleHoverMouseMove = (e) => {
+  const handleHoverMouseMove = () => {
     if (!isHovered) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    onHover(plant, index, rect);
+    onHover(plant);
   };
 
   const getShapeClass = () => {

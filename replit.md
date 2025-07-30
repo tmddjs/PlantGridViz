@@ -2,11 +2,12 @@
 
 ## Overview
 
-This is a full-stack web application for visualizing and managing plant data through an interactive grid interface. The application displays 100 plant species with their botanical characteristics and allows users to select plants to generate diagrams and view detailed information.
+This is a full-stack web application for visualizing and managing plant data through an interactive grid interface. The application displays 100 plant species with their botanical characteristics using geometric shapes. Users can hover for proximity-based scaling and detailed information, click to select plants for circular diagram composition displayed in a side panel.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Design aesthetic: Minimalist, artistic, non-commercial with small fonts, thin lines, and sophisticated visual elements. Prefers subtle design over high visibility/usability.
 
 ## System Architecture
 
@@ -28,10 +29,12 @@ Preferred communication style: Simple, everyday language.
 ### Key Components
 
 #### Plant Grid System
-- **Interactive Grid**: 8x32 cell layout displaying plants as visual shapes
-- **Visual Encoding**: Different shapes represent plant life forms (trees, shrubs, herbs)
-- **Selection System**: Multi-select capability with keyboard modifiers
-- **Modal System**: Separate modals for plant details and diagram generation
+- **Interactive Grid**: 10x10 cell layout displaying plants as geometric shapes without borders
+- **Visual Encoding**: Circles (trees), squares (shrubs), triangles (herbs) with plant names below
+- **Proximity Scaling**: Mouse distance-based shape scaling for interactive exploration
+- **Hover Details**: Bottom slide-up panel showing plant information on hover
+- **Selection System**: Click-to-select plants while hovering, with side panel diagram
+- **Circular Diagram**: Real-time side panel with circular composition visualization
 
 #### Data Models
 - **Plant Schema**: Scientific name, Korean name, life form, height, root depth, light requirements, lifespan

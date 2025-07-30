@@ -1,15 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plant } from "@shared/schema";
 import { plantsData } from "@/data/plantsData";
 import PlantCell from "./PlantCell";
-import PlantDetailModal from "./PlantDetailModal";
-import DiagramModal from "./DiagramModal";
+import HoverDetail from "./HoverDetail";
+import SidePanel from "./SidePanel";
 
 export default function PlantGrid() {
   const [selectedPlants, setSelectedPlants] = useState<Plant[]>([]);
-  const [detailPlant, setDetailPlant] = useState<Plant | null>(null);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [isDiagramOpen, setIsDiagramOpen] = useState(false);
+  const [hoveredPlant, setHoveredPlant] = useState<Plant | null>(null);
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
 
   // Convert plantsData to Plant objects with generated IDs
   const plants: Plant[] = plantsData.map((data, index) => ({
@@ -17,35 +16,33 @@ export default function PlantGrid() {
     ...data
   }));
 
-  const handleSelect = (plant: Plant, isMultiSelect: boolean) => {
-    if (isMultiSelect) {
-      const index = selectedPlants.findIndex(p => p.id === plant.id);
-      if (index >= 0) {
-        setSelectedPlants(prev => prev.filter(p => p.id !== plant.id));
-      } else {
-        setSelectedPlants(prev => [...prev, plant]);
-      }
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    return () => document.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  const handleSelect = (plant: Plant) => {
+    const index = selectedPlants.findIndex(p => p.id === plant.id);
+    if (index >= 0) {
+      setSelectedPlants(prev => prev.filter(p => p.id !== plant.id));
     } else {
-      setSelectedPlants([plant]);
+      setSelectedPlants(prev => [...prev, plant]);
     }
   };
 
-  const handleShowDetail = (plant: Plant) => {
-    setDetailPlant(plant);
-    setIsDetailOpen(true);
+  const handleHover = (plant: Plant | null) => {
+    setHoveredPlant(plant);
   };
 
   const clearSelection = () => {
     setSelectedPlants([]);
   };
 
-  const generateDiagram = () => {
-    if (selectedPlants.length === 0) {
-      alert('선택된 식생이 없습니다.');
-      return;
-    }
-    setIsDiagramOpen(true);
-  };
+  const hasSidePanelOpen = selectedPlants.length > 0;
 
   return (
     <div className="font-crimson text-botanical-dark min-h-screen bg-white">
@@ -64,55 +61,43 @@ export default function PlantGrid() {
         </div>
       </header>
 
-      {/* Main Grid */}
-      <main className="py-12 px-6">
-        <div className="max-w-4xl mx-auto">
-          {/* Grid Container */}
-          <div className="grid grid-cols-10 gap-3 mb-8 justify-items-center" data-testid="plant-grid">
-            {plants.map((plant, index) => (
-              <PlantCell
-                key={plant.id}
-                plant={plant}
-                index={index}
-                isSelected={selectedPlants.some(p => p.id === plant.id)}
-                onSelect={handleSelect}
-                onShowDetail={handleShowDetail}
-              />
-            ))}
+      {/* Main Content */}
+      <div className="flex">
+        {/* Main Grid */}
+        <main className={`py-12 px-6 transition-all duration-300 ease-out ${
+          hasSidePanelOpen ? 'flex-1 pr-80' : 'w-full'
+        }`}>
+          <div className="max-w-4xl mx-auto">
+            {/* Grid Container */}
+            <div className="grid grid-cols-10 gap-x-6 gap-y-8 justify-items-center" data-testid="plant-grid">
+              {plants.map((plant, index) => (
+                <PlantCell
+                  key={plant.id}
+                  plant={plant}
+                  index={index}
+                  isSelected={selectedPlants.some(p => p.id === plant.id)}
+                  isHovered={hoveredPlant?.id === plant.id}
+                  onSelect={handleSelect}
+                  onHover={handleHover}
+                  mousePosition={mousePosition}
+                />
+              ))}
+            </div>
           </div>
-          
-          {/* Action Bar */}
-          <div className="text-center mt-12">
-            <button 
-              onClick={clearSelection}
-              className="text-xs text-botanical-medium hover:text-botanical-dark transition-colors border-b border-transparent hover:border-botanical-light pb-1"
-              data-testid="clear-selection"
-            >
-              선택 해제
-            </button>
-            <span className="mx-4 text-botanical-light">|</span>
-            <button 
-              onClick={generateDiagram}
-              className="text-xs text-botanical-accent hover:text-botanical-dark transition-colors border-b border-transparent hover:border-botanical-accent pb-1"
-              data-testid="generate-diagram"
-            >
-              다이어그램 생성
-            </button>
-          </div>
-        </div>
-      </main>
+        </main>
+        
+        {/* Side Panel */}
+        <SidePanel
+          selectedPlants={selectedPlants}
+          isVisible={hasSidePanelOpen}
+          onClear={clearSelection}
+        />
+      </div>
 
-      {/* Modals */}
-      <PlantDetailModal
-        plant={detailPlant}
-        isOpen={isDetailOpen}
-        onClose={() => setIsDetailOpen(false)}
-      />
-      
-      <DiagramModal
-        selectedPlants={selectedPlants}
-        isOpen={isDiagramOpen}
-        onClose={() => setIsDiagramOpen(false)}
+      {/* Hover Detail */}
+      <HoverDetail
+        plant={hoveredPlant}
+        isVisible={!!hoveredPlant}
       />
     </div>
   );

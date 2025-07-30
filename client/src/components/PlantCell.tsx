@@ -1,21 +1,55 @@
 import { Plant } from "@shared/schema";
+import { useState, useRef, useEffect } from "react";
 
 interface PlantCellProps {
   plant: Plant;
   index: number;
   isSelected: boolean;
-  onSelect: (plant: Plant, isMultiSelect: boolean) => void;
-  onShowDetail: (plant: Plant) => void;
+  isHovered: boolean;
+  onSelect: (plant: Plant) => void;
+  onHover: (plant: Plant | null) => void;
+  mousePosition: { x: number; y: number } | null;
 }
 
-export default function PlantCell({ plant, index, isSelected, onSelect, onShowDetail }: PlantCellProps) {
+export default function PlantCell({ plant, index, isSelected, isHovered, onSelect, onHover, mousePosition }: PlantCellProps) {
+  const cellRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    if (mousePosition && cellRef.current) {
+      const rect = cellRef.current.getBoundingClientRect();
+      const cellCenter = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      };
+      
+      const distance = Math.sqrt(
+        Math.pow(mousePosition.x - cellCenter.x, 2) + 
+        Math.pow(mousePosition.y - cellCenter.y, 2)
+      );
+      
+      const maxDistance = 80; // pixels
+      const proximityScale = Math.max(0, 1 - distance / maxDistance);
+      const newScale = 1 + (proximityScale * 0.8); // Scale up to 1.8x
+      setScale(newScale);
+    } else {
+      setScale(1);
+    }
+  }, [mousePosition]);
+
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (e.shiftKey || e.ctrlKey || e.metaKey) {
-      onSelect(plant, true);
-    } else {
-      onShowDetail(plant);
+    if (isHovered) {
+      onSelect(plant);
     }
+  };
+
+  const handleMouseEnter = () => {
+    onHover(plant);
+  };
+
+  const handleMouseLeave = () => {
+    onHover(null);
   };
 
   const getShapeClass = () => {
@@ -33,13 +67,23 @@ export default function PlantCell({ plant, index, isSelected, onSelect, onShowDe
 
   return (
     <div
-      className={`plant-cell w-8 h-8 border border-botanical-light flex items-center justify-center relative cursor-pointer transition-all duration-300 ease-out hover:shadow-sm ${
-        isSelected ? 'border-botanical-accent border-opacity-80' : ''
-      }`}
+      ref={cellRef}
+      className={`plant-cell flex flex-col items-center justify-center relative cursor-pointer transition-all duration-200 ease-out ${
+        isSelected ? 'opacity-100' : ''
+      } ${isHovered ? 'z-10' : ''}`}
       onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       data-testid={`plant-cell-${index}`}
     >
-      <div className={`plant-shape transition-transform duration-300 ease-out hover:scale-130 ${getShapeClass()}`} />
+      <div 
+        className={`plant-shape transition-transform duration-200 ease-out ${getShapeClass()}`}
+        style={{ transform: `scale(${scale})` }}
+      />
+      <div className="mt-2 text-center">
+        <div className="text-[8px] font-medium text-botanical-dark leading-tight">{plant.korean}</div>
+        <div className="text-[6px] italic text-botanical-medium leading-tight mt-0.5">{plant.scientific}</div>
+      </div>
     </div>
   );
 }

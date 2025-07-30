@@ -33,37 +33,27 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
       return;
     }
 
-    let animationFrame;
+    const threshold = 80;
 
-    const updateScale = () => {
-      if (cellRef.current) {
-        const rect = cellRef.current.getBoundingClientRect();
-        const cellCenter = {
-          x: rect.left + rect.width / 2,
-          y: rect.top + rect.height / 2,
-        };
+    const handleMouseMove = () => {
+      if (!cellRef.current) return;
 
-        const { x, y } = mousePositionRef.current;
+      const rect = cellRef.current.getBoundingClientRect();
+      const cellCenter = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      };
 
-        const distance = Math.sqrt(
-          Math.pow(x - cellCenter.x, 2) +
-          Math.pow(y - cellCenter.y, 2)
-        );
+      const { x, y } = mousePositionRef.current;
+      const distance = Math.hypot(x - cellCenter.x, y - cellCenter.y);
 
-        const maxDistance = 80;
-        const proximityScale = Math.max(0, 1 - distance / maxDistance);
-        const newScale = 1 + proximityScale * 1.0;
-        setScale(newScale);
-      }
-      animationFrame = requestAnimationFrame(updateScale);
+      setScale(distance < threshold ? 1.4 : 1);
     };
 
-    updateScale();
-
+    handleMouseMove();
+    document.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => {
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
-      }
+      document.removeEventListener('mousemove', handleMouseMove);
     };
   }, [isHovered, mousePositionRef]);
 

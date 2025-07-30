@@ -7,7 +7,7 @@ interface PlantCellProps {
   isSelected: boolean;
   isHovered: boolean;
   onSelect: (plant: Plant) => void;
-  onHover: (plant: Plant | null) => void;
+  onHover: (plant: Plant | null, index?: number) => void;
   mousePosition: { x: number; y: number } | null;
 }
 
@@ -28,9 +28,9 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
         Math.pow(mousePosition.y - cellCenter.y, 2)
       );
       
-      const maxDistance = 80; // pixels
+      const maxDistance = 150; // Increased range
       const proximityScale = Math.max(0, 1 - distance / maxDistance);
-      const newScale = 1 + (proximityScale * 0.8); // Scale up to 1.8x
+      const newScale = 1 + (proximityScale * 1.5); // Scale up to 2.5x more aggressively
       setScale(newScale);
     } else {
       setScale(1);
@@ -45,7 +45,7 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
   };
 
   const handleMouseEnter = () => {
-    onHover(plant);
+    onHover(plant, index);
   };
 
   const handleMouseLeave = () => {
@@ -80,7 +80,7 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
         className={`plant-shape transition-transform duration-200 ease-out ${getShapeClass()}`}
         style={{ transform: `scale(${scale})` }}
       />
-      <div className="mt-2 text-center">
+      <div className="mt-2 text-center transition-transform duration-200 ease-out" style={{ transform: `scale(${scale})` }}>
         <div className="text-[8px] font-medium text-botanical-dark leading-tight">{plant.korean}</div>
         <div className="text-[6px] italic text-botanical-medium leading-tight mt-0.5">{plant.scientific}</div>
       </div>

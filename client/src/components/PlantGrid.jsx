@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import { plantsData } from "../data/plantsData.js";
 import PlantCell from "./PlantCell.jsx";
 import SidePanel from "./SidePanel.jsx";
@@ -119,10 +120,16 @@ export default function PlantGrid() {
         }`}>
           <div className="max-w-4xl mx-auto">
             {/* Flexible Container allowing dynamic repositioning */}
-            <div className="flex flex-wrap justify-center gap-x-2 gap-y-4" data-testid="plant-grid" style={{
-              width: '100%',
-              maxWidth: '800px'
-            }}>
+            <motion.div
+              layout
+              transition={{ layout: { type: 'spring', stiffness: 300, damping: 30 } }}
+              className="flex flex-wrap justify-center gap-x-2 gap-y-4"
+              data-testid="plant-grid"
+              style={{
+                width: '100%',
+                maxWidth: '800px'
+              }}
+            >
               {plants.map((plant, index) => (
                 <PlantCell
                   key={plant.id}
@@ -135,7 +142,7 @@ export default function PlantGrid() {
                   mousePositionRef={mousePositionRef}
                 />
               ))}
-            </div>
+            </motion.div>
           </div>
         </main>
         

@@ -62,7 +62,7 @@ export default function PlantGrid() {
     <div className="font-crimson text-botanical-dark min-h-screen bg-white">
       {/* Header */}
       <header className={`py-8 px-6 border-b border-botanical-light transition-all duration-300 ease-out ${
-        hasSidePanelOpen ? 'text-center pr-80' : 'text-center'
+        hasSidePanelOpen ? 'text-center mr-80' : 'text-center'
       }`}>
         <div className={`transition-all duration-300 ease-out ${
           hasSidePanelOpen ? 'max-w-4xl mx-auto' : ''
@@ -85,7 +85,7 @@ export default function PlantGrid() {
       <div className="flex">
         {/* Main Grid */}
         <main className={`py-12 px-6 transition-all duration-300 ease-out ${
-          hasSidePanelOpen ? 'flex-1 pr-80' : 'w-full'
+          hasSidePanelOpen ? 'flex-1 mr-80' : 'w-full'
         }`}>
           <div className="max-w-4xl mx-auto">
             {/* Flexible Container allowing dynamic repositioning */}

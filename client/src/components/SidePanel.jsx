@@ -1,16 +1,8 @@
-import { Plant } from "@shared/schema";
-
-interface SidePanelProps {
-  selectedPlants: Plant[];
-  isVisible: boolean;
-  onClear: () => void;
-}
-
-export default function SidePanel({ selectedPlants, isVisible, onClear }: SidePanelProps) {
+export default function SidePanel({ selectedPlants, isVisible, onClear }) {
   if (!isVisible) return null;
 
   // Generate circular diagram positions
-  const generateCircularPositions = (count: number) => {
+  const generateCircularPositions = (count) => {
     const positions = [];
     const centerX = 120;
     const centerY = 120;
@@ -27,7 +19,7 @@ export default function SidePanel({ selectedPlants, isVisible, onClear }: SidePa
 
   const positions = generateCircularPositions(selectedPlants.length);
 
-  const getShapeElement = (plant: Plant, index: number) => {
+  const getShapeElement = (plant, index) => {
     const pos = positions[index];
     const baseClass = "absolute transition-all duration-500 ease-out";
     

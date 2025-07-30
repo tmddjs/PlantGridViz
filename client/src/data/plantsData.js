@@ -1,6 +1,4 @@
-import { Plant } from "@shared/schema";
-
-export const plantsData: Omit<Plant, 'id'>[] = [
+export const plantsData = [
   {scientific: "Zelkova serrata", korean: "느티나무", lifeForm: "교목", maxHeight: 8.1, rootDepth: "95-147", lightNeed: 4, lifespan: 116},
   {scientific: "Acer palmatum", korean: "단풍나무", lifeForm: "교목", maxHeight: 19.9, rootDepth: "112-154", lightNeed: 5, lifespan: 101},
   {scientific: "Ginkgo biloba", korean: "은행나무", lifeForm: "교목", maxHeight: 15.0, rootDepth: "90-167", lightNeed: 4, lifespan: 69},

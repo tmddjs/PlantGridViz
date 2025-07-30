@@ -1,26 +1,23 @@
-import { useState, useEffect, Fragment } from "react";
-import { Plant } from "@shared/schema";
-import { plantsData } from "@/data/plantsData";
-import PlantCell from "./PlantCell";
-import InlineDetail from "./InlineDetail";
-import SidePanel from "./SidePanel";
+import { useState, useEffect } from "react";
+import { plantsData } from "../data/plantsData.js";
+import PlantCell from "./PlantCell.jsx";
+import SidePanel from "./SidePanel.jsx";
 
 export default function PlantGrid() {
-  const [selectedPlants, setSelectedPlants] = useState<Plant[]>([]);
-  const [hoveredPlant, setHoveredPlant] = useState<Plant | null>(null);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
+  const [selectedPlants, setSelectedPlants] = useState([]);
+  const [hoveredPlant, setHoveredPlant] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [mousePosition, setMousePosition] = useState(null);
 
-  // Convert plantsData to Plant objects with generated IDs
-  const plants: Plant[] = plantsData.map((data, index) => ({
+  const plants = plantsData.map((data, index) => ({
     id: `plant-${index + 1}`,
     ...data
   }));
 
   useEffect(() => {
-    let animationFrame: number;
+    let animationFrame;
     
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMouseMove = (e) => {
       if (animationFrame) {
         cancelAnimationFrame(animationFrame);
       }
@@ -39,7 +36,7 @@ export default function PlantGrid() {
     };
   }, []);
 
-  const handleSelect = (plant: Plant) => {
+  const handleSelect = (plant) => {
     const index = selectedPlants.findIndex(p => p.id === plant.id);
     if (index >= 0) {
       setSelectedPlants(prev => prev.filter(p => p.id !== plant.id));
@@ -48,7 +45,7 @@ export default function PlantGrid() {
     }
   };
 
-  const handleHover = (plant: Plant | null, index?: number) => {
+  const handleHover = (plant, index) => {
     setHoveredPlant(plant);
     setHoveredIndex(plant ? (index ?? null) : null);
   };

@@ -1,18 +1,7 @@
-import { Plant } from "@shared/schema";
 import { useState, useRef, useEffect, useMemo } from "react";
 
-interface PlantCellProps {
-  plant: Plant;
-  index: number;
-  isSelected: boolean;
-  isHovered: boolean;
-  onSelect: (plant: Plant) => void;
-  onHover: (plant: Plant | null, index?: number) => void;
-  mousePosition: { x: number; y: number } | null;
-}
-
-export default function PlantCell({ plant, index, isSelected, isHovered, onSelect, onHover, mousePosition }: PlantCellProps) {
-  const cellRef = useRef<HTMLDivElement>(null);
+export default function PlantCell({ plant, index, isSelected, isHovered, onSelect, onHover, mousePosition }) {
+  const cellRef = useRef(null);
   const [scale, setScale] = useState(1);
 
   const scaledStyle = useMemo(() => {
@@ -58,7 +47,7 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
     }
   }, [mousePosition, isHovered]);
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e) => {
     e.stopPropagation();
     if (isHovered) {
       onSelect(plant);

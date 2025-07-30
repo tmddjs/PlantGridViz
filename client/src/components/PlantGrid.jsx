@@ -83,47 +83,55 @@ export default function PlantGrid() {
             <motion.div
               layout
               transition={{ layout: { type: 'spring', stiffness: 300, damping: 30 } }}
-              className="flex flex-wrap justify-center gap-x-2 gap-y-4"
+              className="flex flex-col items-center gap-y-4"
               data-testid="plant-grid"
               style={{
                 width: '100%',
-                maxWidth: '800px'
+                maxWidth: '680px'
               }}
             >
-              {plants.map((plant, index) => (
-                <PlantCell
-                  key={plant.id}
-                  plant={plant}
-                  index={index}
-                  isSelected={selectedPlants.some(p => p.id === plant.id)}
-                  isHovered={hoveredPlant?.id === plant.id}
-                  onSelect={handleSelect}
-                  onHover={(p) => handleHover(p)}
-                  mousePositionRef={mousePositionRef}
-                />
-              ))}
+              {Array.from({ length: Math.ceil(plants.length / 10) }).map((_, rowIdx) => {
+                const rowPlants = plants.slice(rowIdx * 10, rowIdx * 10 + 10);
+                const containsHovered = hoveredPlant && rowPlants.some(p => p.id === hoveredPlant.id);
+                return (
+                  <div key={rowIdx} className="w-full">
+                    <div className="flex justify-center gap-x-2">
+                      {rowPlants.map((plant, index) => (
+                        <PlantCell
+                          key={plant.id}
+                          plant={plant}
+                          index={rowIdx * 10 + index}
+                          isSelected={selectedPlants.some(p => p.id === plant.id)}
+                          isHovered={hoveredPlant?.id === plant.id}
+                          onSelect={handleSelect}
+                          onHover={(p) => handleHover(p)}
+                          mousePositionRef={mousePositionRef}
+                        />
+                      ))}
+                    </div>
+                    {containsHovered && (
+                      <div className="mt-2 p-4 border border-botanical-light bg-white text-xs">
+                        <div className="text-sm font-medium text-botanical-dark mb-1">
+                          {hoveredPlant.korean}{" "}
+                          <span className="italic text-botanical-medium">({hoveredPlant.scientific})</span>
+                        </div>
+                        <div className="space-y-0.5">
+                          <div>생활형: {hoveredPlant.lifeForm}</div>
+                          <div>최대높이: {hoveredPlant.maxHeight}m</div>
+                          <div>근계 깊이: {hoveredPlant.rootDepth}</div>
+                          <div>광요구도: {hoveredPlant.lightNeed}/10</div>
+                          <div>수명: {hoveredPlant.lifespan}년</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </motion.div>
           </div>
         </main>
         
       </div>
-
-      {/* Hover Detail Row */}
-      {hoveredPlant && (
-        <div className="mt-6 p-4 border border-botanical-light bg-white text-xs">
-          <div className="text-sm font-medium text-botanical-dark mb-1">
-            {hoveredPlant.korean}{" "}
-            <span className="italic text-botanical-medium">({hoveredPlant.scientific})</span>
-          </div>
-          <div className="space-y-0.5">
-            <div>생활형: {hoveredPlant.lifeForm}</div>
-            <div>최대높이: {hoveredPlant.maxHeight}m</div>
-            <div>근계 깊이: {hoveredPlant.rootDepth}</div>
-            <div>광요구도: {hoveredPlant.lightNeed}/10</div>
-            <div>수명: {hoveredPlant.lifespan}년</div>
-          </div>
-        </div>
-      )}
 
     </div>
   );

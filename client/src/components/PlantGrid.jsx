@@ -7,6 +7,7 @@ export default function PlantGrid() {
   const [selectedPlants, setSelectedPlants] = useState([]);
   const [hoveredPlant, setHoveredPlant] = useState(null);
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [hoveredRect, setHoveredRect] = useState(null);
   const mousePositionRef = useRef({ x: 0, y: 0 });
 
   const plants = plantsData.map((data, index) => ({
@@ -45,9 +46,10 @@ export default function PlantGrid() {
     }
   };
 
-  const handleHover = (plant, index) => {
+  const handleHover = (plant, index, rect) => {
     setHoveredPlant(plant);
     setHoveredIndex(plant ? (index ?? null) : null);
+    setHoveredRect(rect ?? null);
   };
 
   const clearSelection = () => {
@@ -99,7 +101,7 @@ export default function PlantGrid() {
                   isSelected={selectedPlants.some(p => p.id === plant.id)}
                   isHovered={hoveredPlant?.id === plant.id}
                   onSelect={handleSelect}
-                  onHover={(p) => handleHover(p, index)}
+                  onHover={(p, rect) => handleHover(p, index, rect)}
                   mousePositionRef={mousePositionRef}
                 />
               ))}
@@ -115,20 +117,31 @@ export default function PlantGrid() {
         />
       </div>
 
-      {/* Bottom Hover Detail */}
-      {hoveredPlant && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/95 border-t border-botanical-light p-3 transition-opacity duration-150 ease-out z-30">
-          <div className={`max-w-4xl mx-auto text-center ${hasSidePanelOpen ? 'pr-80' : ''}`}>
-            <div className="text-sm font-medium text-botanical-dark mb-1">
-              {hoveredPlant.korean} <span className="italic text-botanical-medium">({hoveredPlant.scientific})</span>
-            </div>
-            <div className="text-xs text-botanical-medium space-x-4">
-              <span>생활형: {hoveredPlant.lifeForm}</span>
-              <span>최대높이: {hoveredPlant.maxHeight}m</span>
-              <span>근계 깊이: {hoveredPlant.rootDepth}</span>
-              <span>광요구도: {hoveredPlant.lightNeed}/10</span>
-              <span>수명: {hoveredPlant.lifespan}년</span>
-            </div>
+      {/* Hover Detail Tooltip */}
+      {hoveredPlant && hoveredRect && (
+        <div
+          className="fixed bg-white/95 border border-botanical-light p-2 text-xs z-30 shadow"
+          style={{
+            left:
+              hoveredRect.right + 200 > window.innerWidth
+                ? hoveredRect.left
+                : hoveredRect.right + 8,
+            top:
+              hoveredRect.right + 200 > window.innerWidth
+                ? hoveredRect.bottom + 8
+                : hoveredRect.top,
+          }}
+        >
+          <div className="text-sm font-medium text-botanical-dark mb-1">
+            {hoveredPlant.korean}{" "}
+            <span className="italic text-botanical-medium">({hoveredPlant.scientific})</span>
+          </div>
+          <div className="space-y-0.5">
+            <div>생활형: {hoveredPlant.lifeForm}</div>
+            <div>최대높이: {hoveredPlant.maxHeight}m</div>
+            <div>근계 깊이: {hoveredPlant.rootDepth}</div>
+            <div>광요구도: {hoveredPlant.lightNeed}/10</div>
+            <div>수명: {hoveredPlant.lifespan}년</div>
           </div>
         </div>
       )}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { plantsData } from "../data/plantsData.js";
 import PlantCell from "./PlantCell.jsx";
 import SidePanel from "./SidePanel.jsx";
@@ -7,7 +7,7 @@ export default function PlantGrid() {
   const [selectedPlants, setSelectedPlants] = useState([]);
   const [hoveredPlant, setHoveredPlant] = useState(null);
   const [hoveredIndex, setHoveredIndex] = useState(null);
-  const [mousePosition, setMousePosition] = useState(null);
+  const mousePositionRef = useRef({ x: 0, y: 0 });
 
   const plants = plantsData.map((data, index) => ({
     id: `plant-${index + 1}`,
@@ -16,14 +16,14 @@ export default function PlantGrid() {
 
   useEffect(() => {
     let animationFrame;
-    
+
     const handleMouseMove = (e) => {
       if (animationFrame) {
         cancelAnimationFrame(animationFrame);
       }
-      
+
       animationFrame = requestAnimationFrame(() => {
-        setMousePosition({ x: e.clientX, y: e.clientY });
+        mousePositionRef.current = { x: e.clientX, y: e.clientY };
       });
     };
 
@@ -100,7 +100,7 @@ export default function PlantGrid() {
                   isHovered={hoveredPlant?.id === plant.id}
                   onSelect={handleSelect}
                   onHover={(p) => handleHover(p, index)}
-                  mousePosition={mousePosition}
+                  mousePositionRef={mousePositionRef}
                 />
               ))}
             </div>

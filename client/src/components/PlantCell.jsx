@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 
-export default function PlantCell({ plant, index, isSelected, isHovered, onSelect, onHover, mousePosition }) {
+export default function PlantCell({ plant, index, isSelected, isHovered, onSelect, onHover, mousePositionRef }) {
   const cellRef = useRef(null);
   const [scale, setScale] = useState(1);
 
@@ -28,24 +28,44 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
   }, [scale, isHovered]);
 
   useEffect(() => {
-    if (isHovered && mousePosition && cellRef.current) {
-      const rect = cellRef.current.getBoundingClientRect();
-      const cellCenter = {
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
-      };
-      
-      const distance = Math.sqrt(
-        Math.pow(mousePosition.x - cellCenter.x, 2) + 
-        Math.pow(mousePosition.y - cellCenter.y, 2)
-      );
-      
-      const maxDistance = 80;
-      const proximityScale = Math.max(0, 1 - distance / maxDistance);
-      const newScale = 1 + (proximityScale * 1.0);
-      setScale(newScale);
+    if (!isHovered) {
+      setScale(1);
+      return;
     }
-  }, [mousePosition, isHovered]);
+
+    let animationFrame;
+
+    const updateScale = () => {
+      if (cellRef.current) {
+        const rect = cellRef.current.getBoundingClientRect();
+        const cellCenter = {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        };
+
+        const { x, y } = mousePositionRef.current;
+
+        const distance = Math.sqrt(
+          Math.pow(x - cellCenter.x, 2) +
+          Math.pow(y - cellCenter.y, 2)
+        );
+
+        const maxDistance = 80;
+        const proximityScale = Math.max(0, 1 - distance / maxDistance);
+        const newScale = 1 + proximityScale * 1.0;
+        setScale(newScale);
+      }
+      animationFrame = requestAnimationFrame(updateScale);
+    };
+
+    updateScale();
+
+    return () => {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+    };
+  }, [isHovered, mousePositionRef]);
 
   const handleClick = (e) => {
     e.stopPropagation();

@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>식생 100종 인터랙티브 그리드</title>
+<link rel="stylesheet" href="https://cdn.datatables.net/v/bs5/dt-2.0.7/rg-1.5.0/datatables.min.css"/>
+<style>
+body {
+    margin: 20px;
+}
+</style>
+</head>
+<body>
+
+<h3>식생 100종 인터랙티브 그리드</h3>
+
+<label for="actionSelect">정렬/그룹 기능:</label>
+<select id="actionSelect">
+  <option value="none">-- 선택 --</option>
+  <option value="lifeform">생활형별 그룹(교목/관목/초화)</option>
+  <option value="height">최대높이 순 정렬</option>
+  <option value="light">필요 광량 순 정렬</option>
+</select>
+
+<table id="plantTable" class="display" style="width:100%">
+<thead>
+<tr>
+<th>학명</th><th>국명</th><th>생활형</th><th>최대높이(m)</th><th>뿌리깊이(cm·범위)</th><th>필요광량(1-5)</th><th>전형수명(년)</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Zelkova serrata</td><td>느티나무</td><td>교목</td><td>8.1</td><td>95-147</td><td>4</td><td>116</td></tr>
+<tr><td>Acer palmatum</td><td>단풍나무</td><td>교목</td><td>19.9</td><td>112-154</td><td>5</td><td>101</td></tr>
+<tr><td>Ginkgo biloba</td><td>은행나무</td><td>교목</td><td>15.0</td><td>90-167</td><td>4</td><td>69</td></tr>
+<tr><td>Pinus densiflora</td><td>소나무</td><td>교목</td><td>13.3</td><td>108-150</td><td>5</td><td>83</td></tr>
+<tr><td>Platanus × hispanica</td><td>양버즘나무</td><td>교목</td><td>9.9</td><td>113-164</td><td>4</td><td>97</td></tr>
+<tr><td>Prunus yedoensis</td><td>왕벚나무</td><td>교목</td><td>9.5</td><td>86-133</td><td>4</td><td>100</td></tr>
+<tr><td>Metasequoia glyptostroboides</td><td>메타세쿼이아</td><td>교목</td><td>13.3</td><td>87-150</td><td>4</td><td>92</td></tr>
+<tr><td>Quercus acutissima</td><td>갈참나무</td><td>교목</td><td>10.8</td><td>103-146</td><td>5</td><td>71</td></tr>
+<tr><td>Betula platyphylla var. japonica</td><td>자작나무</td><td>교목</td><td>17.4</td><td>115-161</td><td>4</td><td>62</td></tr>
+<tr><td>Celtis sinensis</td><td>팽나무</td><td>교목</td><td>12.3</td><td>119-188</td><td>3</td><td>78</td></tr>
+<tr><td>Koelreuteria paniculata</td><td>칠엽수</td><td>교목</td><td>19.6</td><td>85-135</td><td>5</td><td>106</td></tr>
+<tr><td>Magnolia kobus</td><td>목련</td><td>교목</td><td>14.8</td><td>81-126</td><td>5</td><td>97</td></tr>
+<tr><td>Sophora japonica</td><td>회화나무</td><td>교목</td><td>17.0</td><td>87-154</td><td>4</td><td>74</td></tr>
+<tr><td>Salix babylonica</td><td>수양버들</td><td>교목</td><td>9.1</td><td>105-183</td><td>5</td><td>87</td></tr>
+<tr><td>Lagerstroemia indica</td><td>배롱나무</td><td>교목</td><td>10.6</td><td>106-149</td><td>3</td><td>74</td></tr>
+<tr><td>Albizia julibrissin</td><td>자귀나무</td><td>교목</td><td>11.7</td><td>92-146</td><td>4</td><td>83</td></tr>
+<tr><td>Chionanthus retusus</td><td>이팝나무</td><td>교목</td><td>10.5</td><td>108-181</td><td>3</td><td>100</td></tr>
+<tr><td>Cornus controversa</td><td>층층나무</td><td>교목</td><td>11.1</td><td>81-134</td><td>4</td><td>116</td></tr>
+<tr><td>Cornus kousa</td><td>산딸나무</td><td>교목</td><td>11.7</td><td>118-177</td><td>3</td><td>98</td></tr>
+<tr><td>Pyrus pyrifolia</td><td>배나무</td><td>교목</td><td>8.7</td><td>89-141</td><td>4</td><td>111</td></tr>
+<tr><td>Aesculus turbinata</td><td>칠엽수</td><td>교목</td><td>15.5</td><td>103-171</td><td>5</td><td>90</td></tr>
+<tr><td>Thuja occidentalis</td><td>양측백나무</td><td>교목</td><td>13.4</td><td>95-147</td><td>4</td><td>77</td></tr>
+<tr><td>Taxus cuspidata</td><td>주목</td><td>교목</td><td>11.5</td><td>117-160</td><td>4</td><td>92</td></tr>
+<tr><td>Spiraea japonica</td><td>조팝나무</td><td>관목</td><td>2.3</td><td>63-83</td><td>3</td><td>26</td></tr>
+<tr><td>Forsythia koreana</td><td>개나리</td><td>관목</td><td>1.0</td><td>46-73</td><td>3</td><td>21</td></tr>
+<tr><td>Hibiscus syriacus</td><td>무궁화</td><td>관목</td><td>3.6</td><td>45-84</td><td>4</td><td>39</td></tr>
+<tr><td>Rosa rugosa</td><td>해변장미</td><td>관목</td><td>2.0</td><td>55-81</td><td>4</td><td>34</td></tr>
+<tr><td>Buddleja davidii</td><td>부들레야</td><td>관목</td><td>3.3</td><td>49-80</td><td>5</td><td>42</td></tr>
+<tr><td>Hydrangea macrophylla</td><td>수국</td><td>관목</td><td>3.7</td><td>66-97</td><td>5</td><td>35</td></tr>
+<tr><td>Camellia japonica</td><td>동백나무</td><td>관목</td><td>2.3</td><td>67-88</td><td>3</td><td>50</td></tr>
+<tr><td>Rhododendron mucronulatum</td><td>진달래</td><td>관목</td><td>4.0</td><td>41-73</td><td>5</td><td>31</td></tr>
+<tr><td>Gardenia jasminoides</td><td>치자나무</td><td>관목</td><td>3.6</td><td>40-79</td><td>5</td><td>26</td></tr>
+<tr><td>Buxus microphylla</td><td>회양목</td><td>관목</td><td>2.8</td><td>70-98</td><td>3</td><td>22</td></tr>
+<tr><td>Nandina domestica</td><td>남천</td><td>관목</td><td>1.0</td><td>68-95</td><td>5</td><td>31</td></tr>
+<tr><td>Euonymus alatus</td><td>화살나무</td><td>관목</td><td>3.4</td><td>54-85</td><td>3</td><td>43</td></tr>
+<tr><td>Deutzia gracilis</td><td>말발도리</td><td>관목</td><td>2.7</td><td>43-68</td><td>4</td><td>27</td></tr>
+<tr><td>Syringa vulgaris</td><td>라일락</td><td>관목</td><td>2.7</td><td>58-94</td><td>4</td><td>24</td></tr>
+<tr><td>Osmanthus fragrans</td><td>금목서</td><td>관목</td><td>1.9</td><td>50-76</td><td>4</td><td>24</td></tr>
+<tr><td>Berberis thunbergii</td><td>매자나무</td><td>관목</td><td>2.5</td><td>53-93</td><td>5</td><td>24</td></tr>
+<tr><td>Mahonia aquifolium</td><td>마호니아</td><td>관목</td><td>2.1</td><td>51-86</td><td>4</td><td>37</td></tr>
+<tr><td>Viburnum plicatum</td><td>불두화</td><td>관목</td><td>2.5</td><td>45-70</td><td>5</td><td>25</td></tr>
+<tr><td>Azalea indica</td><td>철쭉</td><td>관목</td><td>1.2</td><td>41-74</td><td>5</td><td>47</td></tr>
+<tr><td>Philadelphus coronarius</td><td>팥배나무</td><td>관목</td><td>2.7</td><td>41-78</td><td>4</td><td>46</td></tr>
+<tr><td>Daphne odora</td><td>영춘화</td><td>관목</td><td>3.5</td><td>53-85</td><td>4</td><td>28</td></tr>
+<tr><td>Lavandula angustifolia</td><td>라벤더</td><td>초화</td><td>0.94</td><td>25-39</td><td>2</td><td>8</td></tr>
+<tr><td>Hemerocallis fulva</td><td>큰꽃 daylily</td><td>초화</td><td>0.69</td><td>15-27</td><td>5</td><td>10</td></tr>
+<tr><td>Miscanthus sinensis</td><td>억새</td><td>초화</td><td>0.86</td><td>18-26</td><td>2</td><td>3</td></tr>
+<tr><td>Pennisetum alopecuroides</td><td>왕쥐꼬리새</td><td>초화</td><td>1.14</td><td>18-30</td><td>5</td><td>4</td></tr>
+<tr><td>Carex oshimensis</td><td>왕사초</td><td>초화</td><td>0.71</td><td>21-33</td><td>2</td><td>8</td></tr>
+<tr><td>Liriope muscari</td><td>맥문동</td><td>초화</td><td>0.3</td><td>18-25</td><td>3</td><td>4</td></tr>
+<tr><td>Pachysandra terminalis</td><td>차전초</td><td>초화</td><td>0.56</td><td>17-23</td><td>5</td><td>3</td></tr>
+<tr><td>Vinca minor</td><td>비카</td><td>초화</td><td>0.58</td><td>17-26</td><td>3</td><td>4</td></tr>
+<tr><td>Hosta plantaginea</td><td>옥잠화</td><td>초화</td><td>0.82</td><td>18-23</td><td>3</td><td>7</td></tr>
+<tr><td>Iris ensata</td><td>꽃창포</td><td>초화</td><td>1.2</td><td>25-37</td><td>5</td><td>3</td></tr>
+<tr><td>Sedum kamtschaticum</td><td>기린초</td><td>초화</td><td>0.55</td><td>16-23</td><td>2</td><td>9</td></tr>
+<tr><td>Coreopsis verticillata</td><td>금계국</td><td>초화</td><td>0.2</td><td>16-29</td><td>3</td><td>4</td></tr>
+<tr><td>Rudbeckia hirta</td><td>루드베키아</td><td>초화</td><td>0.57</td><td>11-26</td><td>3</td><td>9</td></tr>
+<tr><td>Echinacea purpurea</td><td>에키네시아</td><td>초화</td><td>0.52</td><td>16-28</td><td>5</td><td>7</td></tr>
+<tr><td>Nepeta cataria</td><td>캣닢</td><td>초화</td><td>0.8</td><td>10-22</td><td>2</td><td>8</td></tr>
+<tr><td>Miscanthus sacchariflorus</td><td>갈대</td><td>초화</td><td>0.29</td><td>17-32</td><td>4</td><td>8</td></tr>
+<tr><td>Hakonechloa macra</td><td>하코네참억새</td><td>초화</td><td>0.78</td><td>23-31</td><td>5</td><td>7</td></tr>
+<tr><td>Salvia splendens</td><td>샐비어</td><td>초화</td><td>0.86</td><td>20-34</td><td>2</td><td>5</td></tr>
+<tr><td>Pennisetum setaceum &#x27;Rubrum&#x27;</td><td>핑크뮬리</td><td>초화</td><td>0.32</td><td>15-26</td><td>5</td><td>5</td></tr>
+<tr><td>Ophiopogon japonicus</td><td>자주감초</td><td>초화</td><td>0.31</td><td>23-38</td><td>4</td><td>7</td></tr>
+<tr><td>Festuca glauca</td><td>푸른김잔디</td><td>초화</td><td>0.24</td><td>16-24</td><td>4</td><td>8</td></tr>
+<tr><td>Agapanthus africanus</td><td>아가판서스</td><td>초화</td><td>0.28</td><td>17-29</td><td>4</td><td>4</td></tr>
+<tr><td>Gaura lindheimeri</td><td>가우라</td><td>초화</td><td>0.71</td><td>20-28</td><td>2</td><td>5</td></tr>
+<tr><td>Alchemilla mollis</td><td>알케밀라</td><td>초화</td><td>1.12</td><td>17-27</td><td>5</td><td>6</td></tr>
+<tr><td>Ajuga reptans</td><td>아주가</td><td>초화</td><td>0.89</td><td>23-36</td><td>2</td><td>8</td></tr>
+<tr><td>Geranium sanguineum</td><td>제라늄</td><td>초화</td><td>0.56</td><td>10-17</td><td>5</td><td>9</td></tr>
+<tr><td>Ornithogalum umbellatum</td><td>별수선</td><td>초화</td><td>0.32</td><td>21-31</td><td>4</td><td>10</td></tr>
+<tr><td>Crocosmia aurea</td><td>크로코스미아</td><td>초화</td><td>0.97</td><td>11-17</td><td>4</td><td>9</td></tr>
+<tr><td>Persicaria affinis</td><td>범꼬리</td><td>초화</td><td>1.14</td><td>11-19</td><td>4</td><td>9</td></tr>
+<tr><td>Phlox subulata</td><td>플록스</td><td>초화</td><td>1.01</td><td>25-33</td><td>3</td><td>4</td></tr>
+<tr><td>Hylotelephium telephium</td><td>돌나물</td><td>초화</td><td>0.99</td><td>13-24</td><td>2</td><td>3</td></tr>
+<tr><td>Achillea millefolium</td><td>서양톱풀</td><td>초화</td><td>1.14</td><td>19-27</td><td>3</td><td>5</td></tr>
+<tr><td>Digitalis purpurea</td><td>디지털리스</td><td>초화</td><td>1.04</td><td>21-27</td><td>2</td><td>8</td></tr>
+<tr><td>Campanula carpatica</td><td>캄파눌라</td><td>초화</td><td>1.08</td><td>21-31</td><td>5</td><td>8</td></tr>
+<tr><td>Dianthus barbatus</td><td>스위트 윌리엄</td><td>초화</td><td>0.27</td><td>18-25</td><td>5</td><td>10</td></tr>
+<tr><td>Heuchera sanguinea</td><td>휴케라</td><td>초화</td><td>0.36</td><td>20-29</td><td>5</td><td>7</td></tr>
+<tr><td>Astilbe japonica</td><td>아스틸베</td><td>초화</td><td>0.49</td><td>20-34</td><td>3</td><td>6</td></tr>
+<tr><td>Aquilegia flabellata</td><td>매발톱</td><td>초화</td><td>0.25</td><td>17-25</td><td>2</td><td>5</td></tr>
+<tr><td>Brunnera macrophylla</td><td>브루네라</td><td>초화</td><td>0.72</td><td>20-28</td><td>2</td><td>7</td></tr>
+<tr><td>Bergenia cordifolia</td><td>베르게니아</td><td>초화</td><td>0.48</td><td>13-22</td><td>4</td><td>4</td></tr>
+<tr><td>Nepeta × faassenii</td><td>네페타</td><td>초화</td><td>1.08</td><td>25-38</td><td>4</td><td>10</td></tr>
+<tr><td>Eryngium planum</td><td>에린지움</td><td>초화</td><td>0.9</td><td>14-28</td><td>5</td><td>6</td></tr>
+<tr><td>Gaillardia aristata</td><td>루드베키아속 가일라르디아</td><td>초화</td><td>0.52</td><td>25-38</td><td>5</td><td>4</td></tr>
+<tr><td>Chrysanthemum × morifolium</td><td>국화</td><td>초화</td><td>1.18</td><td>16-23</td><td>5</td><td>5</td></tr>
+<tr><td>Anthemis tinctoria</td><td>카밀레</td><td>초화</td><td>1.07</td><td>20-28</td><td>5</td><td>10</td></tr>
+<tr><td>Penstemon digitalis</td><td>펜스테몬</td><td>초화</td><td>0.89</td><td>24-31</td><td>4</td><td>8</td></tr>
+<tr><td>Calamagrostis acutiflora</td><td>칼라마그로스티스</td><td>초화</td><td>1.09</td><td>21-26</td><td>2</td><td>5</td></tr>
+<tr><td>Molinia caerulea</td><td>모리니아</td><td>초화</td><td>0.82</td><td>18-33</td><td>4</td><td>6</td></tr>
+<tr><td>Carex morrowii</td><td>모로윗사초</td><td>초화</td><td>1.16</td><td>17-30</td><td>4</td><td>8</td></tr>
+<tr><td>Acorus gramineus &#x27;Variegatus&#x27;</td><td>줄</td><td>초화</td><td>0.43</td><td>11-23</td><td>2</td><td>7</td></tr>
+<tr><td>Imperata cylindrica &#x27;Red Baron&#x27;</td><td>일본피</td><td>초화</td><td>0.27</td><td>23-31</td><td>5</td><td>10</td></tr>
+<tr><td>Schizachyrium scoparium</td><td>스키자키리움</td><td>초화</td><td>0.8</td><td>25-31</td><td>2</td><td>3</td></tr>
+<tr><td>Panicum virgatum</td><td>스위치그래스</td><td>초화</td><td>0.23</td><td>13-25</td><td>4</td><td>9</td></tr>
+<tr><td>Miscanthus × giganteus</td><td>자이언트억새</td><td>초화</td><td>0.94</td><td>25-34</td><td>3</td><td>8</td></tr>
+<tr><td>Thymus serpyllum</td><td>타임</td><td>초화</td><td>0.37</td><td>20-26</td><td>4</td><td>6</td></tr>
+<tr><td>Origanum vulgare</td><td>오레가노</td><td>초화</td><td>0.52</td><td>19-34</td><td>2</td><td>6</td></tr>
+</tbody>
+</table>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/v/bs5/dt-2.0.7/rg-1.5.0/datatables.min.js"></script>
+<script>
+$(document).ready(function() {
+    var table = $('#plantTable').DataTable({
+        pageLength: 100,
+        rowGroup: {
+            dataSrc: null  // initially no grouping
+        },
+        language: {
+          url: "https://cdn.datatables.net/plug-ins/1.13.1/i18n/ko.json"
+        },
+        autoWidth: false
+    });
+
+    $('#actionSelect').on('change', function() {
+        var val = $(this).val();
+        table.rowGroup().disable().dataSrc(null); // reset grouping
+        if(val === 'lifeform') {
+            table.rowGroup().dataSrc(2).enable(); // 생활형 컬럼 index 2
+            table.order([[2,'asc']]).draw(false);
+        } else if(val === 'height') {
+            table.order([[3,'desc']]).draw(false); // 최대높이
+        } else if(val === 'light') {
+            table.order([[5,'desc']]).draw(false); // 필요 광량
+        } else {
+            table.order([[0,'asc']]).draw(false);
+        }
+    });
+});
+</script>
+</body>
+</html>

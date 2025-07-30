@@ -1,5 +1,5 @@
 import { Plant } from "@shared/schema";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 
 interface PlantCellProps {
   plant: Plant;
@@ -15,8 +15,31 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
   const cellRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
+  const scaledStyle = useMemo(() => {
+    if (!isHovered) {
+      return {
+        transform: 'scale(1)',
+        transformOrigin: 'center',
+        margin: '1px',
+        zIndex: 1,
+        minWidth: '60px',
+        flexBasis: '60px'
+      };
+    }
+
+    return {
+      transform: `scale(${scale})`,
+      transformOrigin: 'center',
+      margin: scale > 1.1 ? `${(scale - 1) * 8}px` : '1px',
+      zIndex: 20,
+      minWidth: '60px',
+      flexBasis: '60px',
+      willChange: 'transform'
+    };
+  }, [scale, isHovered]);
+
   useEffect(() => {
-    if (mousePosition && cellRef.current) {
+    if (isHovered && mousePosition && cellRef.current) {
       const rect = cellRef.current.getBoundingClientRect();
       const cellCenter = {
         x: rect.left + rect.width / 2,
@@ -28,14 +51,12 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
         Math.pow(mousePosition.y - cellCenter.y, 2)
       );
       
-      const maxDistance = 150; // Increased range
+      const maxDistance = 80;
       const proximityScale = Math.max(0, 1 - distance / maxDistance);
-      const newScale = 1 + (proximityScale * 1.5); // Scale up to 2.5x more aggressively
+      const newScale = 1 + (proximityScale * 1.0);
       setScale(newScale);
-    } else {
-      setScale(1);
     }
-  }, [mousePosition]);
+  }, [mousePosition, isHovered]);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -68,21 +89,14 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
   return (
     <div
       ref={cellRef}
-      className={`plant-cell flex flex-col items-center justify-center relative cursor-pointer transition-all duration-200 ease-out ${
+      className={`plant-cell flex flex-col items-center justify-center relative cursor-pointer transition-transform duration-100 ease-out ${
         isSelected ? 'opacity-100' : ''
-      } ${isHovered ? 'z-20' : ''}`}
+      }`}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       data-testid={`plant-cell-${index}`}
-      style={{
-        transform: `scale(${scale})`,
-        transformOrigin: 'center',
-        margin: scale > 1 ? `${(scale - 1) * 15}px` : '2px',
-        zIndex: scale > 1 ? 20 : 1,
-        minWidth: '60px',
-        flexBasis: '60px'
-      }}
+      style={scaledStyle}
     >
       <div className={`plant-shape ${getShapeClass()}`} />
       <div className="mt-2 text-center">

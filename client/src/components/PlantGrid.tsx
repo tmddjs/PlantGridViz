@@ -18,12 +18,25 @@ export default function PlantGrid() {
   }));
 
   useEffect(() => {
+    let animationFrame: number;
+    
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+      
+      animationFrame = requestAnimationFrame(() => {
+        setMousePosition({ x: e.clientX, y: e.clientY });
+      });
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    return () => document.removeEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+    };
   }, []);
 
   const handleSelect = (plant: Plant) => {
@@ -107,7 +120,7 @@ export default function PlantGrid() {
 
       {/* Bottom Hover Detail */}
       {hoveredPlant && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-botanical-light p-4 transition-all duration-200 ease-out z-30">
+        <div className="fixed bottom-0 left-0 right-0 bg-white/95 border-t border-botanical-light p-3 transition-opacity duration-150 ease-out z-30">
           <div className={`max-w-4xl mx-auto text-center ${hasSidePanelOpen ? 'pr-80' : ''}`}>
             <div className="text-sm font-medium text-botanical-dark mb-1">
               {hoveredPlant.korean} <span className="italic text-botanical-medium">({hoveredPlant.scientific})</span>

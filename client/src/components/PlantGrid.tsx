@@ -49,17 +49,23 @@ export default function PlantGrid() {
   return (
     <div className="font-crimson text-botanical-dark min-h-screen bg-white">
       {/* Header */}
-      <header className="py-8 px-6 text-center border-b border-botanical-light">
-        <h1 className="text-lg font-normal tracking-wide mb-2">식생 컬렉션</h1>
-        <p className="text-xs text-botanical-medium font-light">Botanical Species Interactive Grid</p>
-        
-        {/* Selected Counter */}
-        <div className="mt-4 text-xs text-botanical-medium">
-          <span>선택된 항목: </span>
-          <span className="font-semibold text-botanical-accent transition-all duration-200">
-            {selectedPlants.length}
-          </span>
-          <span> / 100</span>
+      <header className={`py-8 px-6 border-b border-botanical-light transition-all duration-300 ease-out ${
+        hasSidePanelOpen ? 'text-center pr-80' : 'text-center'
+      }`}>
+        <div className={`transition-all duration-300 ease-out ${
+          hasSidePanelOpen ? 'max-w-4xl mx-auto' : ''
+        }`}>
+          <h1 className="text-lg font-normal tracking-wide mb-2">식생 컬렉션</h1>
+          <p className="text-xs text-botanical-medium font-light">Botanical Species Interactive Grid</p>
+          
+          {/* Selected Counter */}
+          <div className="mt-4 text-xs text-botanical-medium">
+            <span>선택된 항목: </span>
+            <span className="font-semibold text-botanical-accent transition-all duration-200">
+              {selectedPlants.length}
+            </span>
+            <span> / 100</span>
+          </div>
         </div>
       </header>
 
@@ -70,35 +76,23 @@ export default function PlantGrid() {
           hasSidePanelOpen ? 'flex-1 pr-80' : 'w-full'
         }`}>
           <div className="max-w-4xl mx-auto">
-            {/* Grid Container with inline details */}
-            <div className="grid grid-cols-10 gap-x-6 gap-y-8 justify-items-center auto-rows-min" data-testid="plant-grid">
-              {plants.map((plant, index) => {
-                const isRowEnd = (index + 1) % 10 === 0;
-                const shouldShowDetail = hoveredIndex === index;
-                
-                return (
-                  <Fragment key={plant.id}>
-                    <PlantCell
-                      plant={plant}
-                      index={index}
-                      isSelected={selectedPlants.some(p => p.id === plant.id)}
-                      isHovered={hoveredPlant?.id === plant.id}
-                      onSelect={handleSelect}
-                      onHover={(p) => handleHover(p, index)}
-                      mousePosition={mousePosition}
-                    />
-                    
-                    {/* Show inline detail at end of row if any plant in this row is hovered */}
-                    {isRowEnd && hoveredIndex !== null && Math.floor(hoveredIndex / 10) === Math.floor(index / 10) && (
-                      <InlineDetail
-                        plant={hoveredPlant}
-                        isVisible={!!hoveredPlant}
-                        gridIndex={hoveredIndex}
-                      />
-                    )}
-                  </Fragment>
-                );
-              })}
+            {/* Flexible Container allowing dynamic repositioning */}
+            <div className="flex flex-wrap justify-center gap-x-2 gap-y-4" data-testid="plant-grid" style={{
+              width: '100%',
+              maxWidth: '800px'
+            }}>
+              {plants.map((plant, index) => (
+                <PlantCell
+                  key={plant.id}
+                  plant={plant}
+                  index={index}
+                  isSelected={selectedPlants.some(p => p.id === plant.id)}
+                  isHovered={hoveredPlant?.id === plant.id}
+                  onSelect={handleSelect}
+                  onHover={(p) => handleHover(p, index)}
+                  mousePosition={mousePosition}
+                />
+              ))}
             </div>
           </div>
         </main>
@@ -111,6 +105,23 @@ export default function PlantGrid() {
         />
       </div>
 
+      {/* Bottom Hover Detail */}
+      {hoveredPlant && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-botanical-light p-4 transition-all duration-200 ease-out z-30">
+          <div className={`max-w-4xl mx-auto text-center ${hasSidePanelOpen ? 'pr-80' : ''}`}>
+            <div className="text-sm font-medium text-botanical-dark mb-1">
+              {hoveredPlant.korean} <span className="italic text-botanical-medium">({hoveredPlant.scientific})</span>
+            </div>
+            <div className="text-xs text-botanical-medium space-x-4">
+              <span>생활형: {hoveredPlant.lifeForm}</span>
+              <span>최대높이: {hoveredPlant.maxHeight}m</span>
+              <span>근계 깊이: {hoveredPlant.rootDepth}</span>
+              <span>광요구도: {hoveredPlant.lightNeed}/10</span>
+              <span>수명: {hoveredPlant.lifespan}년</span>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

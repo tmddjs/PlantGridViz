@@ -70,17 +70,22 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
       ref={cellRef}
       className={`plant-cell flex flex-col items-center justify-center relative cursor-pointer transition-all duration-200 ease-out ${
         isSelected ? 'opacity-100' : ''
-      } ${isHovered ? 'z-10' : ''}`}
+      } ${isHovered ? 'z-20' : ''}`}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       data-testid={`plant-cell-${index}`}
+      style={{
+        transform: `scale(${scale})`,
+        transformOrigin: 'center',
+        margin: scale > 1 ? `${(scale - 1) * 15}px` : '2px',
+        zIndex: scale > 1 ? 20 : 1,
+        minWidth: '60px',
+        flexBasis: '60px'
+      }}
     >
-      <div 
-        className={`plant-shape transition-transform duration-200 ease-out ${getShapeClass()}`}
-        style={{ transform: `scale(${scale})` }}
-      />
-      <div className="mt-2 text-center transition-transform duration-200 ease-out" style={{ transform: `scale(${scale})` }}>
+      <div className={`plant-shape ${getShapeClass()}`} />
+      <div className="mt-2 text-center">
         <div className="text-[8px] font-medium text-botanical-dark leading-tight">{plant.korean}</div>
         <div className="text-[6px] italic text-botanical-medium leading-tight mt-0.5">{plant.scientific}</div>
       </div>

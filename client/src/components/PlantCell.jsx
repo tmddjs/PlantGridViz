@@ -47,7 +47,8 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
       const { x, y } = mousePositionRef.current;
       const distance = Math.hypot(x - cellCenter.x, y - cellCenter.y);
 
-      setScale(distance < threshold ? 1.4 : 1);
+      // Increase scale when the cursor is close to the cell
+      setScale(distance < threshold ? 1.8 : 1);
     };
 
     handleMouseMove();

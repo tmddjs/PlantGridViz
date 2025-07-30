@@ -6,7 +6,6 @@ import SidePanel from "./SidePanel.jsx";
 export default function PlantGrid() {
   const [selectedPlants, setSelectedPlants] = useState([]);
   const [hoveredPlant, setHoveredPlant] = useState(null);
-  const [hoveredIndex, setHoveredIndex] = useState(null);
   const [hoveredRect, setHoveredRect] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const mousePositionRef = useRef({ x: 0, y: 0 });
@@ -67,7 +66,6 @@ export default function PlantGrid() {
 
   const handleHover = (plant, index, rect) => {
     setHoveredPlant(plant);
-    setHoveredIndex(plant ? (index ?? null) : null);
 
     if (!plant) {
       setHoveredRect(null);

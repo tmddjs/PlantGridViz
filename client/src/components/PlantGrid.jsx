@@ -8,6 +8,7 @@ export default function PlantGrid() {
   const [hoveredPlant, setHoveredPlant] = useState(null);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [hoveredRect, setHoveredRect] = useState(null);
+  const [imageUrl, setImageUrl] = useState("");
   const mousePositionRef = useRef({ x: 0, y: 0 });
 
   const plants = plantsData.map((data, index) => ({
@@ -36,6 +37,24 @@ export default function PlantGrid() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!hoveredPlant) {
+      setImageUrl("");
+      return;
+    }
+
+    const controller = new AbortController();
+    const url = `https://source.unsplash.com/160x160/?${encodeURIComponent(hoveredPlant.scientific)}`;
+
+    fetch(url, { signal: controller.signal })
+      .then((res) => setImageUrl(res.url))
+      .catch(() => {});
+
+    return () => {
+      controller.abort();
+    };
+  }, [hoveredPlant]);
 
   const handleSelect = (plant) => {
     const index = selectedPlants.findIndex(p => p.id === plant.id);
@@ -132,6 +151,13 @@ export default function PlantGrid() {
                 : hoveredRect.top,
           }}
         >
+          {imageUrl && (
+            <img
+              src={imageUrl}
+              alt={hoveredPlant.korean}
+              className="w-40 h-40 object-cover mb-2"
+            />
+          )}
           <div className="text-sm font-medium text-botanical-dark mb-1">
             {hoveredPlant.korean}{" "}
             <span className="italic text-botanical-medium">({hoveredPlant.scientific})</span>

@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { motion } from "framer-motion";
 
 export default function PlantCell({ plant, index, isSelected, isHovered, onSelect, onHover, mousePositionRef }) {
   const cellRef = useRef(null);
@@ -48,8 +47,7 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
       const { x, y } = mousePositionRef.current;
       const distance = Math.hypot(x - cellCenter.x, y - cellCenter.y);
 
-      // Increase scale when the cursor is close to the cell
-      setScale(distance < threshold ? 1.8 : 1);
+      setScale(distance < threshold ? 1.4 : 1);
     };
 
     handleMouseMove();
@@ -67,16 +65,11 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
   };
 
   const handleMouseEnter = () => {
-    onHover(plant);
+    onHover(plant, index);
   };
 
   const handleMouseLeave = () => {
     onHover(null);
-  };
-
-  const handleHoverMouseMove = () => {
-    if (!isHovered) return;
-    onHover(plant);
   };
 
   const getShapeClass = () => {
@@ -93,9 +86,7 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
   };
 
   return (
-    <motion.div
-      layout
-      transition={{ layout: { type: 'spring', stiffness: 300, damping: 30 } }}
+    <div
       ref={cellRef}
       className={`plant-cell flex flex-col items-center justify-center relative cursor-pointer transition-transform duration-100 ease-out ${
         isSelected ? 'opacity-100' : ''
@@ -103,7 +94,6 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onMouseMove={handleHoverMouseMove}
       data-testid={`plant-cell-${index}`}
       style={scaledStyle}
     >
@@ -112,6 +102,6 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
         <div className="text-[8px] font-medium text-botanical-dark leading-tight">{plant.korean}</div>
         <div className="text-[6px] italic text-botanical-medium leading-tight mt-0.5">{plant.scientific}</div>
       </div>
-    </motion.div>
+    </div>
   );
 }

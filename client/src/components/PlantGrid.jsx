@@ -88,7 +88,7 @@ export default function PlantGrid() {
         className="py-8 px-6 border-b border-botanical-light text-center transition-all duration-300"
         style={{
           width: selectedPlants.length > 0 ? 'calc(100% - 20rem)' : '100%',
-          marginLeft: 'auto',
+          marginRight: 'auto',
         }}
       >
         <h1 className="text-lg font-normal tracking-wide mb-2">식생 컬렉션</h1>
@@ -110,7 +110,7 @@ export default function PlantGrid() {
           className="py-12 px-6 transition-all duration-300"
           style={{
             width: selectedPlants.length > 0 ? 'calc(100% - 20rem)' : '100%',
-            marginLeft: 'auto',
+            marginRight: 'auto',
           }}
         >
           <div className="max-w-4xl mx-auto">

@@ -125,7 +125,7 @@ export default function PlantGrid() {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          transition={{ type: "spring", stiffness: 200, damping: 30 }}
+                          transition={{ type: "spring", stiffness: 500, damping: 60 }}
                           style={{ overflow: "hidden" }}
                         >
                           <div className="mt-2 p-4 border border-botanical-light bg-white text-xs">

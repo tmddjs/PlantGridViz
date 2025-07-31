@@ -84,7 +84,11 @@ export default function PlantGrid() {
 
       <div className="flex">
         {/* Main Grid */}
-        <main className="py-12 px-6 w-full">
+        <main
+          className={`py-12 px-6 w-full transition-all duration-300 ${
+            selectedPlants.length > 0 ? 'mr-80' : ''
+          }`}
+        >
           <div className="max-w-4xl mx-auto">
             <div
               className="flex flex-col items-center gap-y-4"

@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import { plantsData } from "../data/plantsData.js";   // ← 경로 수정
 import PlantCell from "./PlantCell.jsx";
-import SidePanel from "./SidePanel.jsx";
-import { motion } from "framer-motion";
+import SidePanel from "./SidePanel.jsx";   
 export default function PlantGrid() {
   const [selectedPlants, setSelectedPlants] = useState([]);
   const [hoveredPlant, setHoveredPlant] = useState(null);
@@ -86,7 +86,9 @@ export default function PlantGrid() {
         {/* Main Grid */}
         <main className="py-12 px-6 w-full">
           <div className="max-w-4xl mx-auto">
-            <div
+            <motion.div
+              layout
+              transition={{ layout: { type: "spring", stiffness: 100, damping: 60 } }}
               className="flex flex-col items-center gap-y-4"
               data-testid="plant-grid"
               style={{ width: "100%", maxWidth: "680px" }}
@@ -113,34 +115,27 @@ export default function PlantGrid() {
                       ))}
                     </div>
 
-                    <motion.div
-                      initial={false}
-                      animate={{ height: containsHovered ? "auto" : 0, opacity: containsHovered ? 1 : 0 }}
-                      transition={{ duration: 0.2 }}
-                      style={{ overflow: "hidden" }}
-                    >
-                      {containsHovered && (
-                        <div className="mt-2 p-4 border border-botanical-light bg-white text-xs">
-                          <div className="text-sm font-medium mb-1">
-                            {hoveredPlant.korean}{" "}
-                            <span className="italic text-botanical-medium">
-                              ({hoveredPlant.scientific})
-                            </span>
-                          </div>
-                          <div className="space-y-0.5">
-                            <div>생활형: {hoveredPlant.lifeForm}</div>
-                            <div>최대높이: {hoveredPlant.maxHeight} m</div>
-                            <div>근계 깊이: {hoveredPlant.rootDepth}</div>
-                            <div>광요구도: {hoveredPlant.lightNeed}/5</div>
-                            <div>수명: {hoveredPlant.lifespan} 년</div>
-                          </div>
+                    {containsHovered && (
+                      <div className="mt-2 p-4 border border-botanical-light bg-white text-xs">
+                        <div className="text-sm font-medium mb-1">
+                          {hoveredPlant.korean}{" "}
+                          <span className="italic text-botanical-medium">
+                            ({hoveredPlant.scientific})
+                          </span>
                         </div>
-                      )}
-                    </motion.div>
+                        <div className="space-y-0.5">
+                          <div>생활형: {hoveredPlant.lifeForm}</div>
+                          <div>최대높이: {hoveredPlant.maxHeight} m</div>
+                          <div>근계 깊이: {hoveredPlant.rootDepth}</div>
+                          <div>광요구도: {hoveredPlant.lightNeed}/5</div>
+                          <div>수명: {hoveredPlant.lifespan} 년</div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
-            </div>
+            </motion.div>
           </div>
         </main>
 

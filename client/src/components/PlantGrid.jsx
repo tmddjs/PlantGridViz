@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
 import { plantsData } from "../data/plantsData.js";   // ← 경로 수정
 import PlantCell from "./PlantCell.jsx";
-import SidePanel from "./SidePanel.jsx";   
+import SidePanel from "./SidePanel.jsx";
+import { motion, AnimatePresence } from "framer-motion";
 export default function PlantGrid() {
   const [selectedPlants, setSelectedPlants] = useState([]);
   const [hoveredPlant, setHoveredPlant] = useState(null);
@@ -86,9 +86,7 @@ export default function PlantGrid() {
         {/* Main Grid */}
         <main className="py-12 px-6 w-full">
           <div className="max-w-4xl mx-auto">
-            <motion.div
-              layout
-              transition={{ layout: { type: "spring", stiffness: 100, damping: 60 } }}
+            <div
               className="flex flex-col items-center gap-y-4"
               data-testid="plant-grid"
               style={{ width: "100%", maxWidth: "680px" }}
@@ -99,7 +97,12 @@ export default function PlantGrid() {
                   hoveredPlant && rowPlants.some((p) => p.id === hoveredPlant.id);
 
                 return (
-                  <div key={rowIdx} className="w-full">
+                  <motion.div
+                    key={rowIdx}
+                    className="w-full"
+                    layout
+                    transition={{ layout: { type: "spring", stiffness: 200, damping: 30 } }}
+                  >
                     <div className="flex justify-center gap-x-2">
                       {rowPlants.map((plant, idx) => (
                         <PlantCell
@@ -115,27 +118,38 @@ export default function PlantGrid() {
                       ))}
                     </div>
 
-                    {containsHovered && (
-                      <div className="mt-2 p-4 border border-botanical-light bg-white text-xs">
-                        <div className="text-sm font-medium mb-1">
-                          {hoveredPlant.korean}{" "}
-                          <span className="italic text-botanical-medium">
-                            ({hoveredPlant.scientific})
-                          </span>
-                        </div>
-                        <div className="space-y-0.5">
-                          <div>생활형: {hoveredPlant.lifeForm}</div>
-                          <div>최대높이: {hoveredPlant.maxHeight} m</div>
-                          <div>근계 깊이: {hoveredPlant.rootDepth}</div>
-                          <div>광요구도: {hoveredPlant.lightNeed}/5</div>
-                          <div>수명: {hoveredPlant.lifespan} 년</div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                    <AnimatePresence initial={false}>
+                      {containsHovered && (
+                        <motion.div
+                          key="details"
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ type: "spring", stiffness: 200, damping: 30 }}
+                          style={{ overflow: "hidden" }}
+                        >
+                          <div className="mt-2 p-4 border border-botanical-light bg-white text-xs">
+                            <div className="text-sm font-medium mb-1">
+                              {hoveredPlant.korean}{" "}
+                              <span className="italic text-botanical-medium">
+                                ({hoveredPlant.scientific})
+                              </span>
+                            </div>
+                            <div className="space-y-0.5">
+                              <div>생활형: {hoveredPlant.lifeForm}</div>
+                              <div>최대높이: {hoveredPlant.maxHeight} m</div>
+                              <div>근계 깊이: {hoveredPlant.rootDepth}</div>
+                              <div>광요구도: {hoveredPlant.lightNeed}/5</div>
+                              <div>수명: {hoveredPlant.lifespan} 년</div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
                 );
               })}
-            </motion.div>
+            </div>
           </div>
         </main>
 

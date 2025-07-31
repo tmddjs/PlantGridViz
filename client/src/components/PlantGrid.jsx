@@ -7,6 +7,11 @@ export default function PlantGrid() {
   const [selectedPlants, setSelectedPlants] = useState([]);
   const [hoveredPlant, setHoveredPlant] = useState(null);
   const mousePositionRef = useRef({ x: 0, y: 0 });
+  const openTimeoutRef = useRef(null);
+  const closeTimeoutRef = useRef(null);
+
+  const HOVER_OPEN_DELAY = 100;
+  const HOVER_CLOSE_DELAY = 100;
 
   // id 부여 + 데이터 전개 연산자 수정 (.data ➜ ...data)
   const plants = plantsData.map((data, index) => ({
@@ -38,7 +43,26 @@ export default function PlantGrid() {
         : [...prev, plant]                            /* 기존 [.prev] → [...prev] 수정 */
     );
 
-  const handleHover = (plant) => setHoveredPlant(plant);
+  const handleHover = (plant) => {
+    if (plant) {
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+      openTimeoutRef.current = setTimeout(() => {
+        setHoveredPlant(plant);
+      }, HOVER_OPEN_DELAY);
+    } else {
+      if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+      closeTimeoutRef.current = setTimeout(() => {
+        setHoveredPlant(null);
+      }, HOVER_CLOSE_DELAY);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    };
+  }, []);
   const clearSelection = () => setSelectedPlants([]);
 
   return (

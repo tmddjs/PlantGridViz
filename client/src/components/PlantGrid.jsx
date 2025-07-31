@@ -134,6 +134,7 @@ export default function PlantGrid() {
                             )}
                             isHovered={hoverId === plant.id}
                             onSelect={toggleSelect}
+                            mousePositionRef={pointRef}
                           />
                         ))}
                       </div>

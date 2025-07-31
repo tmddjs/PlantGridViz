@@ -6,12 +6,15 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function PlantGrid() {
   const [selectedPlants, setSelectedPlants] = useState([]);
   const [hoveredPlant, setHoveredPlant] = useState(null);
+  const [columns, setColumns] = useState(10);
   const mousePositionRef = useRef({ x: 0, y: 0 });
   const openTimeoutRef = useRef(null);
   const closeTimeoutRef = useRef(null);
 
   const HOVER_OPEN_DELAY = 100;
   const HOVER_CLOSE_DELAY = 100;
+  const PANEL_WIDTH = 320; // side panel width in px
+  const CELL_TOTAL_WIDTH = 70; // approximate cell width incl. gap
 
   // id 부여 + 데이터 전개 연산자 수정 (.data ➜ ...data)
   const plants = plantsData.map((data, index) => ({
@@ -57,6 +60,19 @@ export default function PlantGrid() {
     }
   };
 
+  const updateColumns = () => {
+    const availableWidth =
+      window.innerWidth - (selectedPlants.length > 0 ? PANEL_WIDTH : 0);
+    const maxCols = Math.floor(availableWidth / CELL_TOTAL_WIDTH);
+    setColumns(Math.max(1, Math.min(10, maxCols)));
+  };
+
+  useEffect(() => {
+    updateColumns();
+    window.addEventListener('resize', updateColumns);
+    return () => window.removeEventListener('resize', updateColumns);
+  }, [selectedPlants.length]);
+
   useEffect(() => {
     return () => {
       if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
@@ -68,7 +84,10 @@ export default function PlantGrid() {
   return (
     <div className="font-crimson text-botanical-dark min-h-screen bg-white">
       {/* ───── Header ───── */}
-      <header className="py-8 px-6 border-b border-botanical-light text-center">
+      <header
+        className="py-8 px-6 border-b border-botanical-light text-center transition-all duration-300"
+        style={{ marginRight: selectedPlants.length > 0 ? '20rem' : 0 }}
+      >
         <h1 className="text-lg font-normal tracking-wide mb-2">식생 컬렉션</h1>
         <p className="text-xs text-botanical-medium font-light">
           Botanical Species Interactive Grid
@@ -84,15 +103,18 @@ export default function PlantGrid() {
 
       <div className="flex">
         {/* Main Grid */}
-        <main className="py-12 px-6 w-full">
+        <main
+          className="py-12 px-6 w-full transition-all duration-300"
+          style={{ marginRight: selectedPlants.length > 0 ? '20rem' : 0 }}
+        >
           <div className="max-w-4xl mx-auto">
             <div
               className="flex flex-col items-center gap-y-4"
               data-testid="plant-grid"
-              style={{ width: "100%", maxWidth: "680px" }}
+              style={{ width: '100%', maxWidth: `${columns * CELL_TOTAL_WIDTH}px` }}
             >
-              {Array.from({ length: Math.ceil(plants.length / 10) }).map((_, rowIdx) => {
-                const rowPlants = plants.slice(rowIdx * 10, rowIdx * 10 + 10);
+              {Array.from({ length: Math.ceil(plants.length / columns) }).map((_, rowIdx) => {
+                const rowPlants = plants.slice(rowIdx * columns, rowIdx * columns + columns);
                 const containsHovered =
                   hoveredPlant && rowPlants.some((p) => p.id === hoveredPlant.id);
 
@@ -108,7 +130,7 @@ export default function PlantGrid() {
                         <PlantCell
                           key={plant.id}
                           plant={plant}
-                          index={rowIdx * 10 + idx}
+                          index={rowIdx * columns + idx}
                           isSelected={selectedPlants.some((p) => p.id === plant.id)}
                           isHovered={hoveredPlant?.id === plant.id}
                           onSelect={handleSelect}

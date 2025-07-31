@@ -86,7 +86,10 @@ export default function PlantGrid() {
       {/* ───── Header ───── */}
       <header
         className="py-8 px-6 border-b border-botanical-light text-center transition-all duration-300"
-        style={{ marginRight: selectedPlants.length > 0 ? '20rem' : 0 }}
+        style={{
+          width: selectedPlants.length > 0 ? 'calc(100% - 20rem)' : '100%',
+          marginLeft: 'auto',
+        }}
       >
         <h1 className="text-lg font-normal tracking-wide mb-2">식생 컬렉션</h1>
         <p className="text-xs text-botanical-medium font-light">
@@ -104,8 +107,11 @@ export default function PlantGrid() {
       <div className="flex">
         {/* Main Grid */}
         <main
-          className="py-12 px-6 w-full transition-all duration-300"
-          style={{ marginRight: selectedPlants.length > 0 ? '20rem' : 0 }}
+          className="py-12 px-6 transition-all duration-300"
+          style={{
+            width: selectedPlants.length > 0 ? 'calc(100% - 20rem)' : '100%',
+            marginLeft: 'auto',
+          }}
         >
           <div className="max-w-4xl mx-auto">
             <div

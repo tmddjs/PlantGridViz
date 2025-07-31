@@ -1,14 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 
-export default function PlantCell({
-  plant,
-  index,
-  isSelected,
-  isHovered,
-  onSelect,
-  onHover = () => {},
-  mousePositionRef,
-}) {
+export default function PlantCell({ plant, index, isSelected, isHovered, onSelect, onHover, mousePositionRef }) {
   const cellRef = useRef(null);
   const [scale, setScale] = useState(1);
 
@@ -44,7 +36,7 @@ export default function PlantCell({
     const threshold = 80;
 
     const handleMouseMove = () => {
-      if (!cellRef.current || !mousePositionRef?.current) return;
+      if (!cellRef.current) return;
 
       const rect = cellRef.current.getBoundingClientRect();
       const cellCenter = {
@@ -59,12 +51,10 @@ export default function PlantCell({
     };
 
     handleMouseMove();
-    if (mousePositionRef?.current) {
-      document.addEventListener('mousemove', handleMouseMove, { passive: true });
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-      };
-    }
+    document.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+    };
   }, [isHovered, mousePositionRef]);
 
   const handleClick = (e) => {
@@ -75,11 +65,11 @@ export default function PlantCell({
   };
 
   const handleMouseEnter = () => {
-    if (onHover) onHover(plant, index);
+    onHover(plant, index);
   };
 
   const handleMouseLeave = () => {
-    if (onHover) onHover(null);
+    onHover(null);
   };
 
   const getShapeClass = () => {

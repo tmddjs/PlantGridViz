@@ -21,7 +21,7 @@ export default function PlantGrid() {
   const plants = plantsData.map((data, index) => ({
     id: `plant-${index + 1}`,
     ...data,
-  }));                                                /* :contentReference[oaicite:1]{index=1} */
+  }));
 
   /* 마우스 위치 추적 → 각 셀 scale 계산용 */
   useEffect(() => {

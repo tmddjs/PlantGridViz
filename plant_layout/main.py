@@ -15,6 +15,7 @@ def main():
     placements = []
     with open(args.csv_path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
+        fieldnames = list(reader.fieldnames or [])
         for i, row in enumerate(reader):
             placements.append({
                 **row,
@@ -23,9 +24,18 @@ def main():
             })
 
     os.makedirs(args.out_dir, exist_ok=True)
-    out_path = os.path.join(args.out_dir, "placement.json")
-    with open(out_path, "w", encoding="utf-8") as f:
+
+    # existing JSON output for debugging/compatibility
+    json_path = os.path.join(args.out_dir, "placement.json")
+    with open(json_path, "w", encoding="utf-8") as f:
         json.dump(placements, f)
+
+    # VLA expects a CSV file describing the layout
+    vla_path = os.path.join(args.out_dir, "layout.csv")
+    with open(vla_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames + ["x", "y"])
+        writer.writeheader()
+        writer.writerows(placements)
 
 
 if __name__ == "__main__":

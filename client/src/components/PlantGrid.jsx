@@ -135,7 +135,7 @@ export default function PlantGrid() {
           <div className="max-w-4xl mx-auto">
             <div
               className="flex flex-col items-center gap-y-4"
-              data-testid="plant-grid"
+              data-testid="plant-grid mx-auto"
               style={{ width: '100%', maxWidth: `${columns * CELL_TOTAL_WIDTH}px` }}
             >
               {Array.from({ length: Math.ceil(plants.length / columns) }).map((_, rowIdx) => {

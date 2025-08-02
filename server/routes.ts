@@ -79,10 +79,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       });
 
-      const placement = JSON.parse(
-        await fs.readFile(join(dir, "placement.json"), "utf-8")
-      );
-      res.json(placement);
+      // Invoke the external VLA process with the generated layout
+      const layoutPath = join(dir, "layout.csv");
+      await new Promise<void>((resolve, reject) => {
+        const vla = process.env.VLA || "vla";
+        const proc = spawn(vla, [layoutPath]);
+
+        proc.stdout.on("data", (d: Buffer) => {
+          console.log(d.toString());
+        });
+
+        proc.stderr.on("data", (d: Buffer) => {
+          console.error(d.toString());
+        });
+
+        proc.on("error", reject);
+        proc.on("close", (code: number | null) => {
+          code === 0 ? resolve() : reject(new Error(`VLA exit code ${code}`));
+        });
+      });
+
+      res.status(200).json({ status: "ok" });
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Failed to run layout" });

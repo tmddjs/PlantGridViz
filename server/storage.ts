@@ -1,17 +1,26 @@
-import { type Plant, type InsertPlant } from "@shared/schema";
 import { randomUUID } from "crypto";
+import type { PlantInput } from "../shared/schema";
+import plantsData from "../shared/plantsData";
+
+export interface Plant extends PlantInput {
+  id: string;
+}
 
 export interface IStorage {
   getPlants(): Promise<Plant[]>;
   getPlant(id: string): Promise<Plant | undefined>;
-  createPlant(plant: InsertPlant): Promise<Plant>;
+  createPlant(plant: PlantInput): Promise<Plant>;
 }
 
 export class MemStorage implements IStorage {
   private plants: Map<string, Plant>;
 
-  constructor() {
+  constructor(initial: PlantInput[] = []) {
     this.plants = new Map();
+    initial.forEach((p) => {
+      const id = randomUUID();
+      this.plants.set(id, { id, ...p });
+    });
   }
 
   async getPlants(): Promise<Plant[]> {
@@ -22,12 +31,12 @@ export class MemStorage implements IStorage {
     return this.plants.get(id);
   }
 
-  async createPlant(insertPlant: InsertPlant): Promise<Plant> {
+  async createPlant(insertPlant: PlantInput): Promise<Plant> {
     const id = randomUUID();
-    const plant: Plant = { ...insertPlant, id };
+    const plant: Plant = { id, ...insertPlant };
     this.plants.set(id, plant);
     return plant;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new MemStorage(plantsData);

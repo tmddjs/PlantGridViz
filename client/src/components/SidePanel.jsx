@@ -23,7 +23,7 @@ export default function SidePanel({ selectedPlants, isVisible, onClear }) {
     const pos = positions[index];
     const baseClass = "absolute transition-all duration-500 ease-out";
     
-    switch (plant.lifeForm) {
+    switch (plant.life_form) {
       case '교목':
         return (
           <div
@@ -115,13 +115,13 @@ export default function SidePanel({ selectedPlants, isVisible, onClear }) {
                 className="flex items-center space-x-3 p-2 border border-botanical-light bg-gray-50/50 rounded-sm"
               >
                 <div className={`${
-                  plant.lifeForm === '교목' ? 'w-2 h-2 bg-botanical-accent rounded-full' :
-                  plant.lifeForm === '관목' ? 'w-2 h-2 bg-botanical-medium' :
+                  plant.life_form === '교목' ? 'w-2 h-2 bg-botanical-accent rounded-full' :
+                  plant.life_form === '관목' ? 'w-2 h-2 bg-botanical-medium' :
                   'w-0 h-0 border-l-[3px] border-r-[3px] border-b-[5px] border-l-transparent border-r-transparent border-b-botanical-border'
                 }`} />
                 <div className="flex-1">
-                  <div className="text-xs font-medium text-botanical-dark">{plant.korean}</div>
-                  <div className="text-[10px] text-botanical-medium">{plant.maxHeight}m · {plant.lifeForm}</div>
+                  <div className="text-xs font-medium text-botanical-dark">{plant.kr_name}</div>
+                  <div className="text-[10px] text-botanical-medium">{plant.max_height_m}m · {plant.life_form}</div>
                 </div>
               </div>
             ))}
@@ -133,13 +133,13 @@ export default function SidePanel({ selectedPlants, isVisible, onClear }) {
           <div className="grid grid-cols-2 gap-4 text-center">
             <div>
               <div className="text-sm font-light text-botanical-accent">
-                {(selectedPlants.reduce((sum, p) => sum + p.maxHeight, 0) / selectedPlants.length).toFixed(1)}m
+                {(selectedPlants.reduce((sum, p) => sum + p.max_height_m, 0) / selectedPlants.length).toFixed(1)}m
               </div>
               <div className="text-[10px] text-botanical-medium">평균 높이</div>
             </div>
             <div>
               <div className="text-sm font-light text-botanical-accent">
-                {Math.round(selectedPlants.reduce((sum, p) => sum + p.lifespan, 0) / selectedPlants.length)}
+                {Math.round(selectedPlants.reduce((sum, p) => sum + p.lifespan_yr, 0) / selectedPlants.length)}
               </div>
               <div className="text-[10px] text-botanical-medium">평균 수명(년)</div>
             </div>

@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import plantsData from "../../../shared/plantsData.ts";
-import { runLayout } from "../api/runLayout.ts";
 import PlantCell from "./PlantCell.jsx";
 import SidePanel from "./SidePanel.jsx";
+import RunLayoutButton from "./RunLayoutButton.jsx";
 import { motion, AnimatePresence } from "framer-motion";
 export default function PlantGrid() {
   const [selectedPlants, setSelectedPlants] = useState([]);
@@ -82,16 +82,6 @@ export default function PlantGrid() {
   }, []);
   const clearSelection = () => setSelectedPlants([]);
 
-  const handleRunLayout = async () => {
-    try {
-      const inputs = selectedPlants.map(({ id, ...rest }) => rest);
-      const result = await runLayout(inputs);
-      console.log("Layout result", result);
-    } catch (err) {
-      console.error("Failed to run layout", err);
-    }
-  };
-
   return (
     <div className="font-crimson text-botanical-dark min-h-screen bg-white">
       {/* ───── Header ───── */}
@@ -114,12 +104,7 @@ export default function PlantGrid() {
           <span> / 100</span>
         </div>
         {selectedPlants.length > 0 && (
-          <button
-            onClick={handleRunLayout}
-            className="mt-2 px-2 py-1 border border-botanical-light text-xs"
-          >
-            Run Layout
-          </button>
+          <RunLayoutButton selectedPlants={selectedPlants} />
         )}
       </header>
 

@@ -136,7 +136,7 @@ export default function PlantGrid() {
             <div
               className="flex flex-col items-center gap-y-4"
               data-testid="plant-grid mx-auto"
-              style={{ width: '100%', maxWidth: `${columns * CELL_TOTAL_WIDTH}px` }}
+              style={{ width: '100%', maxWidth: `${columns * CELL_TOTAL_WIDTH * 1.3}px` }}
             >
               {Array.from({ length: Math.ceil(plants.length / columns) }).map((_, rowIdx) => {
                 const rowPlants = plants.slice(rowIdx * columns, rowIdx * columns + columns);

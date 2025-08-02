@@ -73,7 +73,7 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
   };
 
   const getShapeClass = () => {
-    switch (plant.lifeForm) {
+    switch (plant.life_form) {
       case '교목':
         return 'w-3 h-3 bg-botanical-accent rounded-full opacity-80';
       case '관목':
@@ -99,8 +99,8 @@ export default function PlantCell({ plant, index, isSelected, isHovered, onSelec
     >
       <div className={`plant-shape ${getShapeClass()}`} />
       <div className="mt-2 text-center">
-        <div className="text-[8px] font-medium text-botanical-dark leading-tight">{plant.korean}</div>
-        <div className="text-[6px] italic text-botanical-medium leading-tight mt-0.5">{plant.scientific}</div>
+        <div className="text-[8px] font-medium text-botanical-dark leading-tight">{plant.kr_name}</div>
+        <div className="text-[6px] italic text-botanical-medium leading-tight mt-0.5">{plant.scientific_name}</div>
       </div>
     </div>
   );

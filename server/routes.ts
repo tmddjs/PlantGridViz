@@ -1,7 +1,12 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertPlantSchema } from "@shared/schema";
+import type { PlantInput } from "../shared/schema";
+import { selectedPlantsToCsv } from "./utils/serialize";
+import { promises as fs } from "fs";
+import { tmpdir } from "os";
+import { join } from "path";
+import { spawn } from "child_process";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get all plants
@@ -30,11 +35,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create new plant
   app.post("/api/plants", async (req, res) => {
     try {
-      const validatedData = insertPlantSchema.parse(req.body);
-      const plant = await storage.createPlant(validatedData);
+      const plant = await storage.createPlant(req.body as PlantInput);
       res.status(201).json(plant);
     } catch (error) {
       res.status(400).json({ message: "Invalid plant data" });
+    }
+  });
+
+  // Run Python layout
+  app.post("/api/run-layout", async (req, res) => {
+    let dir: string | undefined;
+    try {
+      const plants = req.body as PlantInput[];
+      const csv = selectedPlantsToCsv(plants);
+      dir = await fs.mkdtemp(join(tmpdir(), "layout-"));
+      const csvPath = join(dir, "input.csv");
+      await fs.writeFile(csvPath, csv);
+
+      await new Promise<void>((resolve, reject) => {
+        const proc = spawn("python", [
+          "-m",
+          "plant_layout.main",
+          csvPath,
+          "10",
+          "10",
+          "--out",
+          dir,
+        ]);
+        proc.on("error", reject);
+        proc.on("close", (code) => {
+          code === 0 ? resolve() : reject(new Error(`exit code ${code}`));
+        });
+      });
+
+      const placement = JSON.parse(
+        await fs.readFile(join(dir, "placement.json"), "utf-8")
+      );
+      res.json(placement);
+    } catch (err) {
+      res.status(500).json({ message: "Failed to run layout" });
+    } finally {
+      if (dir) {
+        await fs.rm(dir, { recursive: true, force: true });
+      }
     }
   });
 

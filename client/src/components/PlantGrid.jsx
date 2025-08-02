@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { plantsData } from "../data/plantsData.js";   // ← 경로 수정
+import plantsData from "../../../shared/plantsData.ts";
+import { runLayout } from "../api/runLayout.ts";
 import PlantCell from "./PlantCell.jsx";
 import SidePanel from "./SidePanel.jsx";
 import { motion, AnimatePresence } from "framer-motion";
@@ -81,6 +82,16 @@ export default function PlantGrid() {
   }, []);
   const clearSelection = () => setSelectedPlants([]);
 
+  const handleRunLayout = async () => {
+    try {
+      const inputs = selectedPlants.map(({ id, ...rest }) => rest);
+      const result = await runLayout(inputs);
+      console.log("Layout result", result);
+    } catch (err) {
+      console.error("Failed to run layout", err);
+    }
+  };
+
   return (
     <div className="font-crimson text-botanical-dark min-h-screen bg-white">
       {/* ───── Header ───── */}
@@ -102,6 +113,14 @@ export default function PlantGrid() {
           </span>
           <span> / 100</span>
         </div>
+        {selectedPlants.length > 0 && (
+          <button
+            onClick={handleRunLayout}
+            className="mt-2 px-2 py-1 border border-botanical-light text-xs"
+          >
+            Run Layout
+          </button>
+        )}
       </header>
 
       <div className="flex">
@@ -158,17 +177,17 @@ export default function PlantGrid() {
                         >
                           <div className="mt-2 p-4 border border-botanical-light bg-white text-xs">
                             <div className="text-sm font-medium mb-1">
-                              {hoveredPlant.korean}{" "}
+                              {hoveredPlant.kr_name}{" "}
                               <span className="italic text-botanical-medium">
-                                ({hoveredPlant.scientific})
+                                ({hoveredPlant.scientific_name})
                               </span>
                             </div>
                             <div className="space-y-0.5">
-                              <div>생활형: {hoveredPlant.lifeForm}</div>
-                              <div>최대높이: {hoveredPlant.maxHeight} m</div>
-                              <div>근계 깊이: {hoveredPlant.rootDepth}</div>
-                              <div>광요구도: {hoveredPlant.lightNeed}/5</div>
-                              <div>수명: {hoveredPlant.lifespan} 년</div>
+                              <div>생활형: {hoveredPlant.life_form}</div>
+                              <div>최대높이: {hoveredPlant.max_height_m} m</div>
+                              <div>근계 깊이: {hoveredPlant.root_depth_cm_range}</div>
+                              <div>광요구도: {hoveredPlant.light_requirement_1_5}/5</div>
+                              <div>수명: {hoveredPlant.lifespan_yr} 년</div>
                             </div>
                           </div>
                         </motion.div>

@@ -1,4 +1,5 @@
-import type { PlantInput } from "../shared/schema";
+// Import shared schema so both client and server use the same typing
+import type { PlantInput } from "../../shared/schema";
 
 const headers = [
   "scientific_name",

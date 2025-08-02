@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
-import type { PlantInput } from "../shared/schema";
-import plantsData from "../shared/plantsData";
+import type { PlantInput } from "@shared/schema";
+import plantsData from "@shared/plantsData";
 
 export interface Plant extends PlantInput {
   id: string;

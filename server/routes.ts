@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import type { PlantInput } from "../shared/schema";
+import type { PlantInput } from "@shared/schema";
 import { selectedPlantsToCsv } from "./utils/serialize";
 import { promises as fs } from "fs";
 import { tmpdir } from "os";
@@ -48,23 +48,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const plants = req.body as PlantInput[];
       const csv = selectedPlantsToCsv(plants);
+
+      // create temporary working directory and input file
       dir = await fs.mkdtemp(join(tmpdir(), "layout-"));
       const csvPath = join(dir, "input.csv");
       await fs.writeFile(csvPath, csv);
 
+      const python = process.env.PYTHON || "python3";
+      const width = 10;
+      const height = 10;
+
       await new Promise<void>((resolve, reject) => {
-        const proc = spawn("python", [
+        const proc = spawn(python, [
           "-m",
           "plant_layout.main",
+          String(width),
+          String(height),
           csvPath,
-          "10",
-          "10",
           "--out",
-          dir,
+          dir!,
         ]);
+
+        const stderr: string[] = [];
+        proc.stderr.on("data", (d: Buffer) => {
+          const msg = d.toString();
+          stderr.push(msg);
+          console.error(msg);
+        });
+
         proc.on("error", reject);
-        proc.on("close", (code) => {
-          code === 0 ? resolve() : reject(new Error(`exit code ${code}`));
+        proc.on("close", (code: number | null) => {
+          code === 0
+            ? resolve()
+            : reject(new Error(stderr.join("") || `exit code ${code}`));
         });
       });
 
@@ -73,7 +89,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
       res.json(placement);
     } catch (err) {
-      res.status(500).json({ message: "Failed to run layout" });
+      console.error(err);
+      const message = err instanceof Error ? err.message : "Failed to run layout";
+      res.status(500).json({ message });
     } finally {
       if (dir) {
         await fs.rm(dir, { recursive: true, force: true });

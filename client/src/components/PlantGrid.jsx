@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import plantsData from "../../../shared/plantsData.ts";
+import plantsData from "@shared/plantsData";
 import PlantCell from "./PlantCell.jsx";
 import SidePanel from "./SidePanel.jsx";
 import RunLayoutButton from "./RunLayoutButton.jsx";

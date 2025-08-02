@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { runLayout } from "../api/runLayout.ts";
+import { runLayout } from "../api/runLayout";
 
 export default function RunLayoutButton({ selectedPlants }) {
   const [result, setResult] = useState(null);

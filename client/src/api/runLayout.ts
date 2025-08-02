@@ -1,4 +1,4 @@
-import type { PlantInput } from "../../../shared/schema.ts";
+import type { PlantInput } from "@shared/schema";
 
 export async function runLayout(plants: PlantInput[]) {
   const res = await fetch("/api/run-layout", {

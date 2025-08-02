@@ -48,22 +48,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const plants = req.body as PlantInput[];
       const csv = selectedPlantsToCsv(plants);
+
+      // create temporary working directory and input file
       dir = await fs.mkdtemp(join(tmpdir(), "layout-"));
       const csvPath = join(dir, "input.csv");
       await fs.writeFile(csvPath, csv);
 
+      const python = process.env.PYTHON || "python3";
+      const width = 10;
+      const height = 10;
+
       await new Promise<void>((resolve, reject) => {
-        const proc = spawn("python", [
+        const proc = spawn(python, [
           "-m",
           "plant_layout.main",
+          String(width),
+          String(height),
           csvPath,
-          "10",
-          "10",
           "--out",
-          dir,
+          dir!,
         ]);
+
+        proc.stderr.on("data", (d: Buffer) => {
+          console.error(d.toString());
+        });
+
         proc.on("error", reject);
-        proc.on("close", (code) => {
+        proc.on("close", (code: number | null) => {
           code === 0 ? resolve() : reject(new Error(`exit code ${code}`));
         });
       });
@@ -73,6 +84,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
       res.json(placement);
     } catch (err) {
+      console.error(err);
       res.status(500).json({ message: "Failed to run layout" });
     } finally {
       if (dir) {

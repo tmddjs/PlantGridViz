@@ -1,4 +1,4 @@
-import type { PlantInput } from "../../shared/schema";
+import type { PlantInput } from "../shared/schema";
 
 const headers = [
   "scientific_name",

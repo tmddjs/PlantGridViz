@@ -88,6 +88,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const vla = process.env.VLA;
       if (vla) {
+        console.log(`Running VLA: ${vla} ${layoutPath}`);
         await new Promise<void>((resolve, reject) => {
           const proc = spawn(vla, [layoutPath]);
 
@@ -101,9 +102,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           proc.on("error", reject);
           proc.on("close", (code: number | null) => {
-            code === 0 ? resolve() : reject(new Error(`VLA exit code ${code}`));
+            if (code === 0) {
+              console.log("VLA finished successfully");
+              resolve();
+            } else {
+              console.error(`VLA exited with code ${code}`);
+              reject(new Error(`VLA exit code ${code}`));
+            }
           });
         });
+      } else {
+        console.log("VLA environment variable not set; skipping VLA execution");
       }
 
       const placement = JSON.parse(await fs.readFile(placementPath, "utf8"));
@@ -114,6 +123,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to run layout" });
     } finally {
       if (dir) {
+        const outputRoot = join(process.cwd(), "Output");
+        try {
+          await fs.mkdir(outputRoot, { recursive: true });
+          const runDir = join(outputRoot, Date.now().toString());
+          await fs.cp(dir, runDir, { recursive: true });
+        } catch (copyErr) {
+          console.error(copyErr);
+        }
         await fs.rm(dir, { recursive: true, force: true });
       }
     }

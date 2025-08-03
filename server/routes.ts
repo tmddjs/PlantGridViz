@@ -86,9 +86,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // the route still works without the external dependency.
       const layoutPath = join(dir, "layout.csv");
       const placementPath = join(dir, "placement.json");
+      const outputRoot = join(process.cwd(), "Output");
+      outputPath = join(outputRoot, Date.now().toString());
 
       const vla = process.env.VLA;
       if (vla) {
+        console.log(`Running VLA: ${vla} ${layoutPath}`);
         await new Promise<void>((resolve, reject) => {
           const proc = spawn(vla, [layoutPath]);
 
@@ -102,9 +105,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           proc.on("error", reject);
           proc.on("close", (code: number | null) => {
-            code === 0 ? resolve() : reject(new Error(`VLA exit code ${code}`));
+            if (code === 0) {
+              console.log("VLA finished successfully");
+              resolve();
+            } else {
+              console.error(`VLA exited with code ${code}`);
+              reject(new Error(`VLA exit code ${code}`));
+            }
           });
         });
+      } else {
+        console.log("VLA environment variable not set; skipping VLA execution");
       }
 
       const placement = JSON.parse(await fs.readFile(placementPath, "utf8"));

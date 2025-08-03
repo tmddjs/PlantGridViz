@@ -14,14 +14,16 @@ describe("RunLayoutButton", () => {
     vi.clearAllMocks();
   });
 
-  it("shows result after successful run", async () => {
-    runLayout.mockResolvedValue({ success: true });
-    render(<RunLayoutButton selectedPlants={[{ id: 1, name: "A" }]} />);
-    fireEvent.click(screen.getByRole("button", { name: /run layout/i }));
-    expect(screen.getByRole("button", { name: /running/i })).toBeDisabled();
-    await screen.findByText(/success/);
-    expect(screen.queryByText(/failed to run layout/i)).not.toBeInTheDocument();
-  });
+    it("runs without displaying result", async () => {
+      runLayout.mockResolvedValue({ success: true });
+      render(<RunLayoutButton selectedPlants={[{ id: 1, name: "A" }]} />);
+      fireEvent.click(screen.getByRole("button", { name: /run layout/i }));
+      expect(screen.getByRole("button", { name: /running/i })).toBeDisabled();
+      await screen.findByRole("button", { name: /run layout/i });
+      expect(runLayout).toHaveBeenCalled();
+      expect(screen.queryByText(/failed to run layout/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/success/)).not.toBeInTheDocument();
+    });
 
   it("shows error message when run fails", async () => {
     runLayout.mockRejectedValue(new Error("bad"));

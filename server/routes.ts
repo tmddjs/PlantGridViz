@@ -79,27 +79,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       });
 
-      // Invoke the external VLA process with the generated layout
+      // The Python script above generates a placement.json file that can be
+      // returned directly. If a VLA executable is provided via the VLA env
+      // variable, run it with the generated layout. Otherwise skip this step so
+      // the route still works without the external dependency.
       const layoutPath = join(dir, "layout.csv");
-      await new Promise<void>((resolve, reject) => {
-        const vla = process.env.VLA || "vla";
-        const proc = spawn(vla, [layoutPath]);
+      const placementPath = join(dir, "placement.json");
 
-        proc.stdout.on("data", (d: Buffer) => {
-          console.log(d.toString());
+      const vla = process.env.VLA;
+      if (vla) {
+        await new Promise<void>((resolve, reject) => {
+          const proc = spawn(vla, [layoutPath]);
+
+          proc.stdout.on("data", (d: Buffer) => {
+            console.log(d.toString());
+          });
+
+          proc.stderr.on("data", (d: Buffer) => {
+            console.error(d.toString());
+          });
+
+          proc.on("error", reject);
+          proc.on("close", (code: number | null) => {
+            code === 0 ? resolve() : reject(new Error(`VLA exit code ${code}`));
+          });
         });
+      }
 
-        proc.stderr.on("data", (d: Buffer) => {
-          console.error(d.toString());
-        });
+      const placement = JSON.parse(await fs.readFile(placementPath, "utf8"));
 
-        proc.on("error", reject);
-        proc.on("close", (code: number | null) => {
-          code === 0 ? resolve() : reject(new Error(`VLA exit code ${code}`));
-        });
-      });
-
-      res.status(200).json({ status: "ok" });
+      res.status(200).json(placement);
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Failed to run layout" });

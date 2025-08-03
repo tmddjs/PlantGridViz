@@ -114,6 +114,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to run layout" });
     } finally {
       if (dir) {
+        const outputRoot = join(process.cwd(), "Output");
+        try {
+          await fs.mkdir(outputRoot, { recursive: true });
+          const runDir = join(outputRoot, Date.now().toString());
+          await fs.cp(dir, runDir, { recursive: true });
+        } catch (copyErr) {
+          console.error(copyErr);
+        }
         await fs.rm(dir, { recursive: true, force: true });
       }
     }

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { runLayout } from "../api/runLayout.ts";
 
 export default function RunLayoutButton({ selectedPlants }) {
-  const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -11,9 +10,7 @@ export default function RunLayoutButton({ selectedPlants }) {
       setLoading(true);
       setError(null);
       const inputs = selectedPlants.map(({ id, ...rest }) => rest);
-      const res = await runLayout(inputs);
-      setResult(res);
-      console.log("Layout result", res);
+      await runLayout(inputs);
     } catch (err) {
       console.error("Failed to run layout", err);
       setError("Failed to run layout");
@@ -35,11 +32,6 @@ export default function RunLayoutButton({ selectedPlants }) {
       </button>
       {error && (
         <div className="mt-2 text-xs text-red-600">{error}</div>
-      )}
-      {result && (
-        <pre className="mt-2 p-2 text-xs border border-botanical-light bg-white overflow-x-auto">
-          {JSON.stringify(result, null, 2)}
-        </pre>
       )}
     </div>
   );

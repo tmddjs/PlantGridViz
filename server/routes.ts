@@ -45,6 +45,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Run Python layout
   app.post("/api/run-layout", async (req, res) => {
     let dir: string | undefined;
+    let outputPath: string | undefined;
     try {
       const plants = req.body as PlantInput[];
       const csv = selectedPlantsToCsv(plants);
@@ -85,11 +86,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // the route still works without the external dependency.
       const layoutPath = join(dir, "layout.csv");
       const placementPath = join(dir, "placement.json");
+      const outputRoot = join(process.cwd(), "Output");
+      outputPath = join(outputRoot, Date.now().toString());
 
       const vla = process.env.VLA;
       if (vla) {
+        console.log(`Running VLA: ${vla} ${width} ${height} ${layoutPath}`);
         await new Promise<void>((resolve, reject) => {
-          const proc = spawn(vla, [layoutPath]);
+          const proc = spawn(vla, [
+            String(width),
+            String(height),
+            layoutPath,
+          ]);
 
           proc.stdout.on("data", (d: Buffer) => {
             console.log(d.toString());
@@ -101,19 +109,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           proc.on("error", reject);
           proc.on("close", (code: number | null) => {
-            code === 0 ? resolve() : reject(new Error(`VLA exit code ${code}`));
+            if (code === 0) {
+              console.log("VLA finished successfully");
+              resolve();
+            } else {
+              console.error(`VLA exited with code ${code}`);
+              reject(new Error(`VLA exit code ${code}`));
+            }
           });
         });
+      } else {
+        console.log("VLA environment variable not set; skipping VLA execution");
       }
 
       const placement = JSON.parse(await fs.readFile(placementPath, "utf8"));
 
-      res.status(200).json(placement);
+      res.status(200).json({ placement, outputPath });
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Failed to run layout" });
     } finally {
       if (dir) {
+        const outputRoot = join(process.cwd(), "Output");
+        try {
+          await fs.mkdir(outputRoot, { recursive: true });
+          outputPath ??= join(outputRoot, Date.now().toString());
+          await fs.cp(dir, outputPath, { recursive: true });
+        } catch (copyErr) {
+          console.error(`Failed to copy layout results to ${outputPath}:`, copyErr);
+        }
         await fs.rm(dir, { recursive: true, force: true });
       }
     }

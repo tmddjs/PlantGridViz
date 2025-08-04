@@ -21,3 +21,12 @@ else
   echo "Created $PROFILE and added VLA environment variable"
 fi
 
+# If the script is sourced, export VLA for the current shell session so
+# it can be used immediately without restarting the terminal.
+if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
+  export VLA="${VLA_PATH}"
+  echo "Exported VLA environment variable for current shell"
+else
+  echo "VLA environment variable will be available in new sessions"
+fi
+

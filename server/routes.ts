@@ -93,7 +93,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (vla) {
         console.log(`Running VLA: ${vla} ${width} ${height} ${layoutPath}`);
         await new Promise<void>((resolve, reject) => {
-          const proc = spawn(vla, [String(width), String(height), layoutPath]);
+          const proc = spawn(vla, [String(width), String(height), layoutPath], {
+            cwd: dir,
+          });
 
           proc.stdout.on("data", (d: Buffer) => {
             console.log(d.toString());

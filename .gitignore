@@ -6,3 +6,4 @@ vite.config.ts.*
 *.tar.gz
 Output/*
 !Output/.gitkeep
+/plant_layout/__pycache__

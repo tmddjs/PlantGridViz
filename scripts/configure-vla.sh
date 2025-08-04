@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Adds the VLA environment variable to common shell profiles so it
+# Adds the VLA environment variable to the user's shell profiles so it
 # persists across terminal sessions. Optionally accepts a custom path
 # as the first argument.
 
